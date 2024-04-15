@@ -12,12 +12,12 @@ public class ProjectileController : MonoBehaviour
     public void InIt(Action<ProjectileController> killAction)
     {
         _killAction = killAction;
-        GameStateManager.Instance.OnGameStateChanged += OnGameStateChanged;
+        //GameStateManager.Instance.OnGameStateChanged += OnGameStateChanged;
 
     }
     private void OnGameStateChanged(GameState newGameState)
     {
-        enabled = newGameState == GameState.Gameplay;
+        //enabled = newGameState == GameState.Gameplay;
     }
 
     private void OnEnable()
@@ -27,8 +27,7 @@ public class ProjectileController : MonoBehaviour
     }
     private void OnDestroy()
     {
-        GameStateManager.Instance.OnGameStateChanged -= OnGameStateChanged;
-
+        //GameStateManager.Instance.OnGameStateChanged -= OnGameStateChanged;
     }
     private void FixedUpdate()
     {

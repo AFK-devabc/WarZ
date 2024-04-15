@@ -21,12 +21,8 @@ public class PlayerControler : MonoBehaviour
         instance = this;
     }
 
-    [SerializeField] Player player;
 
     private void Update()
     {
-        if(player != null)
-        {
-        }
     }
 }

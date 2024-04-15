@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.iOS;
 
 public class CameraController : MonoBehaviour
 {
@@ -37,17 +34,16 @@ public class CameraController : MonoBehaviour
     }
     void Awake()
     {
-        GameStateManager.Instance.OnGameStateChanged += OnGameStateChanged;
-   }
+        //GameStateManager.Instance.OnGameStateChanged += OnGameStateChanged;
+    }
 
     void OnDestroy()
     {
-        GameStateManager.Instance.OnGameStateChanged -= OnGameStateChanged;
+        //GameStateManager.Instance.OnGameStateChanged -= OnGameStateChanged;
     }
     private void OnGameStateChanged(GameState newGameState)
     {
-        enabled = newGameState == GameState.Gameplay;
-
+        //enabled = newGameState == GameState.Gameplay;
     }
 
 }

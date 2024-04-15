@@ -6,8 +6,8 @@ public class AttackBehavior : MonoBehaviour
 {
     [SerializeField] private EnemyController controller;
 
-    [SerializeField] protected AttackSkill currentSkill;
-    [SerializeField] protected List<AttackSkill> skills = new List<AttackSkill>();
+    [SerializeField] protected AttackBase m_CurrentAttack;
+    [SerializeField] protected List<AttackBase> m_Attacks = new List<AttackBase>();
     [SerializeField] private Transform transform;
     public bool isAttack;
     public bool isDead;
@@ -26,8 +26,8 @@ public class AttackBehavior : MonoBehaviour
 
         if (isCombat == true && isAttack == false)
         {
-            currentSkill = GetAttackSkill();
-            if (currentSkill != null)
+            m_CurrentAttack = GetAttackBase();
+            if (m_CurrentAttack != null)
             {
                 StartAttack();
             }
@@ -36,9 +36,9 @@ public class AttackBehavior : MonoBehaviour
 
     public void StartAttack()
     {
-        currentSkill.StartAttack();
+        m_CurrentAttack.StartAttack();
         isAttack = true;
-        if(currentSkill.isStopMove)
+        if(m_CurrentAttack.isStopMove)
         {
             controller.movement.SetCanMove(true);
         }
@@ -46,40 +46,40 @@ public class AttackBehavior : MonoBehaviour
 
     public void Attack()
     {
-        if (currentSkill != null)
+        if (m_CurrentAttack != null)
         {
-            currentSkill.Attack();
+            m_CurrentAttack.Attack();
         }
     }
 
     public virtual void StopAttack()
     {
-        if (currentSkill != null)
+        if (m_CurrentAttack != null)
         {
-            currentSkill.StopAttack();
+            m_CurrentAttack.StopAttack();
             isAttack =false;
 
-            if (currentSkill.isStopMove)
+            if (m_CurrentAttack.isStopMove)
             {
                 controller.movement.SetCanMove(false);
             }
-            currentSkill = null;
+            m_CurrentAttack = null;
         }
     }
 
-    public AttackSkill GetAttackSkill()
+    public AttackBase GetAttackBase()
     {
-        foreach (var skill in skills)
+        foreach (var attackBase in m_Attacks)
         {
-            if (skill.isReady())
-                return skill;
+            if (attackBase.isReady())
+                return attackBase;
         }
         return null;
     }
 
     public virtual void AniEventAttack()
     {
-        currentSkill.aniEvent();
+        m_CurrentAttack.aniEvent();
     }
 
     public void SetTarget(Transform target)
@@ -87,7 +87,7 @@ public class AttackBehavior : MonoBehaviour
         isCombat = true;
         attackTarget = target;
 
-        foreach (var skill in skills)
+        foreach (var skill in m_Attacks)
         {
             skill.SetTarget(attackTarget);
         }

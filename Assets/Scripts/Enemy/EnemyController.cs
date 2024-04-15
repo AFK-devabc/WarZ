@@ -17,14 +17,14 @@ public class EnemyController : MonoBehaviour
         navMeshAgent = GetComponent<NavMeshAgent>();
         SetTargetEvent = new UnityEvent<Transform>();
         healthBehavior.TakeDamageEvent.AddListener(SetTargetWhenGetHit);
-        GameManager.Instance.AddEnemy();
-        GameStateManager.Instance.OnGameStateChanged += OnGameStateChanged;
+        //GameManager.Instance.AddEnemy();
+        //GameStateManager.Instance.OnGameStateChanged += OnGameStateChanged;
 
 
     }
-    private void OnGameStateChanged(GameState newGameState)
+    private void OnGameStateChanged(/*GameState newGameState*/)
     {
-        enabled = newGameState == GameState.Gameplay;
+        //enabled = newGameState == GameState.Gameplay;
         movement.enabled = enabled;
         attackBehavior.enabled = enabled;
         healthBehavior.enabled = enabled;
@@ -33,8 +33,8 @@ public class EnemyController : MonoBehaviour
 
     private void OnDestroy()
     {
-        GameManager.Instance?.RemoveEnemy();
-        GameStateManager.Instance.OnGameStateChanged -= OnGameStateChanged;
+        //GameManager.Instance?.RemoveEnemy();
+        //GameStateManager.Instance.OnGameStateChanged -= OnGameStateChanged;
 
     }
     private void SetTargetWhenGetHit()

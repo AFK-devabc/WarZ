@@ -24,18 +24,17 @@ public class PlayerAttack : MonoBehaviour
 
     void Awake()
     {
-        GameStateManager.Instance.OnGameStateChanged += OnGameStateChanged;
+        //GameStateManager.Instance.OnGameStateChanged += OnGameStateChanged;
         isPaused = false;
     }
 
     void OnDestroy()
     {
-        GameStateManager.Instance.OnGameStateChanged -= OnGameStateChanged;
+        //GameStateManager.Instance.OnGameStateChanged -= OnGameStateChanged;
     }
     private void OnGameStateChanged(GameState newGameState)
     {
-        enabled = newGameState == GameState.Gameplay;
-       
+        //enabled = newGameState == GameState.Gameplay;
     }
 
 
@@ -45,7 +44,6 @@ public class PlayerAttack : MonoBehaviour
         OnWeaponEquip();
         canExcuteAttack = true;
         currentAmmo = totalAmmo;
-        HUDManager.getInstance().UpdateBullet(currentAmmo, totalAmmo);
     }
 
 
@@ -62,8 +60,6 @@ public class PlayerAttack : MonoBehaviour
                 bullet.transform.LookAt(new Vector3(target.position.x, shootPoint.position.y, target.position.z));
                 StartCoroutine(AttackCountdown());
                 currentAmmo--;
-                HUDManager.getInstance().UpdateBullet(currentAmmo, totalAmmo);
-
             }
             else
             {
@@ -80,7 +76,6 @@ public class PlayerAttack : MonoBehaviour
     public void AddAmmo(int ammo)
     {
         totalAmmo+= ammo;
-        HUDManager.getInstance().UpdateBullet(currentAmmo, totalAmmo);
     }
     private IEnumerator ReloadAmmoCountdown()
     {
@@ -88,8 +83,6 @@ public class PlayerAttack : MonoBehaviour
         audio.Play();
         yield return new WaitForSeconds(reloadTime);
         currentAmmo = totalAmmo;
-        HUDManager.getInstance().UpdateBullet(currentAmmo, totalAmmo);
-
     }
 
     private IEnumerator AttackCountdown()
