@@ -2,54 +2,29 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class HealthBehavior : MonoBehaviour
+public class BaseHealthBehavior
 {
-    [SerializeField] protected int maxHealthPoint;
-    [SerializeField] protected int healthPoint;
+	private float m_total, m_current, m_sheild;
+	public event Action<float,float> m_OnHealthChangedEvent;
+	public event m_OnZeroHealthEvent;
 
-    [SerializeField] protected string[] deadAni;
-    [HideInInspector] public UnityEvent DeadEvent;
-    [SerializeField] protected float deadTime;
-    [SerializeField] protected Animator animator;
+	BaseHealthBehavior(float i_total)
+	{
+		m_total =m_current =i_total;
+		m_sheild = 0;
+	}
 
-    [HideInInspector] public UnityEvent TakeDamageEvent;
-    protected bool isDead =false;
-    protected HealthbarBehavior healthbarBehavior;
-    private void Start()
-    {
-        healthbarBehavior = GetComponentInChildren<HealthbarBehavior>(true);
-        healthbarBehavior.SetHealth(healthPoint, maxHealthPoint);
-    }
-    public virtual void TakeDamage(int damage)
-    {
-        TakeDamageEvent?.Invoke();
-        this.healthPoint -= damage;
-        healthbarBehavior.SetHealth(healthPoint, maxHealthPoint);
-        if (this.healthPoint <= 0 && !isDead)
-        {
-            Dead();
-        }
-    }
+	public void ChangeHealth(float i_amout,float i_tempAmount)
+	{
+		m_current =mathf.clamp(0,m_current + i_damage,m_total);
+		m_OnHealthChangedEvents.Invoke(m_current, m_total);
+		if(m_current = 0)
+		{
+			m_OnZeroHealthEvent.Invoke();
+		}
+	}
+}
 
-    public virtual void Dead()
-    {
-        isDead = true;
-        DeadEvent?.Invoke();
-        if (deadAni.Length > 0)
-            animator.Play(deadAni[Random.Range(0, deadAni.Length)]);
-        StartCoroutine(DeadCooldown());
-    }
-
-    protected virtual IEnumerator DeadCooldown()
-    {
-        yield return new WaitForSeconds(deadTime);
-        Destroy(this.gameObject);
-    }
-
-
-    public bool IsDead()
-    {
-        return isDead;
-    }
-
+public class HealthBehavior : IHealthBehavior
+{
 }
