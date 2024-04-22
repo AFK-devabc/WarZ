@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AttackBehavior : MonoBehaviour
 {
-    [SerializeField] private EnemyController controller;
+    //[SerializeField] private EnemyController controller;
 
     [SerializeField] protected AttackBase m_CurrentAttack;
     [SerializeField] protected List<AttackBase> m_Attacks = new List<AttackBase>();
@@ -40,7 +40,7 @@ public class AttackBehavior : MonoBehaviour
         isAttack = true;
         if(m_CurrentAttack.isStopMove)
         {
-            controller.movement.SetCanMove(true);
+            //controller.movement.SetCanMove(true);
         }
     }
 
@@ -61,7 +61,7 @@ public class AttackBehavior : MonoBehaviour
 
             if (m_CurrentAttack.isStopMove)
             {
-                controller.movement.SetCanMove(false);
+                //controller.movement.SetCanMove(false);
             }
             m_CurrentAttack = null;
         }

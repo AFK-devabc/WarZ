@@ -1,77 +1,77 @@
-using System.Collections;
-using UnityEngine;
-using UnityEngine.Events;
+using System;
+using System.Collections.Generic;
 
-public class BaseStats
+public class BaseStat
 {
-	public float m_baseValue;
-	public float m_finalValue;
-	private readonly List<StatModifier> statModifiers;
- 
-	public CharacterStat(float baseValue)
+	public readonly StatType m_type;
+	public readonly float m_baseValue;
+	public readonly float m_finalValue;
+	private List<StatModifier> m_statModifiers;
+
+	public BaseStat(StatType  i_type,float i_baseValue)
 	{
-		BaseValue = baseValue;
-		statModifiers = new List<StatModifier>();
+		m_baseValue = m_finalValue = i_baseValue;
+		m_statModifiers = new List<StatModifier>();
 	}
-	public void AddModifier(StatModifier mod)
+	public virtual void AddModifier(StatModifier i_mod)
 	{
-		statModifiers.Add(mod);
+        m_statModifiers.Add(i_mod);
+		CalculatefinalValue();
 	}
 
-	public bool RemoveModifier(StatModifier mod)
+	public virtual void RemoveModifier(StatModifier i_mod)
 	{
-		return statModifiers.Remove(mod);
-	}
+        m_statModifiers.Remove(i_mod);
+        CalculatefinalValue();
+    }
  
-	private float CalculateFinalValue()
+	private void CalculatefinalValue()
 	{
-		float finalValue = BaseValue;
+		float m_finalValue = m_baseValue;
 		float sumPercentAdd = 0; // This will hold the sum of our "PercentAdd" modifiers
 
-		for (int i = 0; i < statModifiers.Count; i++)
+		for (int i = 0; i < m_statModifiers.Count; i++)
 		{
-			StatModifier mod = statModifiers[i];
+			StatModifier mod = m_statModifiers[i];
 
-			if (mod.Type == StatModType.Flat)
+			if (mod.m_type == StatModType.Flat)
 			{
-				finalValue += mod.Value;
+				m_finalValue += mod.m_value;
 			}
-			else if (mod.Type == StatModType.PercentAdd) // When we encounter a "PercentAdd" modifier
+			else if (mod.m_type == StatModType.PercentAdd) // When we encounter a "PercentAdd" modifier
 			{
-				sumPercentAdd += mod.Value; // Start adding together all modifiers of this type
+				sumPercentAdd += mod.m_value; // Start adding together all modifiers of this type
 
 				// If we're at the end of the list OR the next modifer isn't of this type
-				if (i + 1 >= statModifiers.Count || statModifiers[i + 1].Type != StatModType.PercentAdd)
+				if (i + 1 >= m_statModifiers.Count || m_statModifiers[i + 1].m_type!= StatModType.PercentAdd)
 				{
-					finalValue *= 1 + sumPercentAdd; // Multiply the sum with the "finalValue", like we do for "PercentMult" modifiers
+					m_finalValue *= 1 + sumPercentAdd; // Multiply the sum with the "m_finalValue", like we do for "PercentMult" modifiers
 					sumPercentAdd = 0; // Reset the sum back to 0
 				}
 			}
-			else if (mod.Type == StatModType.PercentMult) // Percent renamed to PercentMult
+			else if (mod.m_type == StatModType.PercentMult) // Percent renamed to PercentMult
 			{
-				finalValue *= 1 + mod.Value;
+				m_finalValue *= 1 + mod.m_value;
 			}
 		}
-		return (float)Math.Round(finalValue, 4);
+		m_finalValue= (float)Math.Round(m_finalValue,4);
 	}
 }
 
 public class StatModifier
 {
-	public readonly float Value;
-	public readonly int Order;
-	public readonly StatModType Type;
-// Change the existing constructor to look like this
-public StatModifier(float value, StatModType type, int order)
-{
-    Value = value;
-    Type = type;
-    Order = order;
-}
- 
+	public readonly float m_value;
+	public readonly int m_order;
+	public readonly StatModType m_type;
+	// Change the existing constructor to look like this
+	public StatModifier(float i_value, StatModType i_type, int i_order)
+	{
+		m_value = i_value;
+        m_type = i_type;
+        m_order = i_order;
+	}
 	// Add a new constructor that automatically sets a default Order, in case the user doesn't want to manually define it
-	public StatModifier(float value, StatModType type) : this(value, type, (int)type) { }
-
+	public StatModifier(float i_value, StatModType i_type) : this(i_value, i_type, (int)i_type) { }
 }
 
 public enum StatModType
@@ -81,3 +81,10 @@ public enum StatModType
     PercentMult, // Change our old Percent type to this.
 }
 
+public enum StatType
+{
+	Health,
+	MovementSpeed,
+	AttackSpeed,
+	AttackDamage
+}

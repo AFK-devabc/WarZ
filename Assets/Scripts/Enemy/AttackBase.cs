@@ -4,10 +4,10 @@ using UnityEngine;
 
 public abstract class AttackBase : MonoBehaviour
 {
-    [SerializeField] public float damage;
+    [SerializeField] public BaseStat m_damage;
     protected bool isCountDown;
-    [SerializeField] public float duration;
-    [SerializeField] public float CD;
+    [SerializeField] public BaseStat m_duration;
+    [SerializeField] public BaseStat m_cooldownTime;
     protected float timeCDStart;
     [SerializeField] public bool isRange;
     [SerializeField] public float maxRange;
@@ -24,7 +24,7 @@ public abstract class AttackBase : MonoBehaviour
     {
         if (isCountDown == true)
         {
-            if (timeCDStart > CD)
+            if (timeCDStart > m_cooldownTime.m_finalValue)
             {
                 isCountDown = false;
                 timeCDStart = 0f;
@@ -39,7 +39,7 @@ public abstract class AttackBase : MonoBehaviour
     public virtual void StopAttack()
     {
         isAttacking = false;
-        if (CD > 0f)
+        if (m_cooldownTime.m_finalValue > 0f)
         {
             timeCDStart = Time.time;
             isCountDown = true;

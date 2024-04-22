@@ -69,6 +69,6 @@ public class ProjectileController : MonoBehaviour
     }
     protected void DoDamage(RaycastHit hit)
     {
-        hit.transform.GetComponent<HealthBehavior>()?.TakeDamage(projectileStats.damage);
+        //hit.transform.GetComponent<HealthBehavior>()?.TakeDamage(projectileStats.damage);
     }
 }

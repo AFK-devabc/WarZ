@@ -1,30 +1,40 @@
-using System.Collections;
+using System;
 using UnityEngine;
-using UnityEngine.Events;
+
 
 public class BaseHealthBehavior
 {
-	private float m_total, m_current, m_sheild;
+	private BaseStat m_total;
+	private float m_current;
 	public event Action<float,float> m_OnHealthChangedEvent;
-	public event m_OnZeroHealthEvent;
+	public event Action m_OnZeroHealthEvent;
 
-	BaseHealthBehavior(float i_total)
+	public BaseHealthBehavior(float i_total)
 	{
-		m_total =m_current =i_total;
-		m_sheild = 0;
+		m_total = new BaseStat(StatType.Health,i_total);
 	}
 
 	public void ChangeHealth(float i_amout,float i_tempAmount)
 	{
-		m_current =mathf.clamp(0,m_current + i_damage,m_total);
-		m_OnHealthChangedEvents.Invoke(m_current, m_total);
-		if(m_current = 0)
+		m_current =Mathf.Clamp(0,m_current + i_amout, m_total.m_finalValue);
+		m_OnHealthChangedEvent.Invoke(m_current, m_total.m_finalValue);
+		if(m_current == 0)
 		{
 			m_OnZeroHealthEvent.Invoke();
 		}
 	}
+
+    public void AddModifier(StatModifier i_mod)
+    {
+		m_total.AddModifier(i_mod);
+    }
+
+    public void RemoveModifier(StatModifier i_mod)
+    {
+		m_total.RemoveModifier(i_mod);
+    }
 }
 
-public class HealthBehavior : IHealthBehavior
-{
-}
+//public class HealthBehavior : IHealthBehavior
+//{
+//}

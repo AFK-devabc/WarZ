@@ -12,9 +12,9 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Transform mouse;
     Ray mouseRay;
 
-    [SerializeField] private float audioVolumn;
-    [SerializeField] private AudioSource backgroundMusic;
-    [SerializeField] private AudioClip backgroundClip;
+    //[SerializeField] private float audioVolumn;
+    //[SerializeField] private AudioSource backgroundMusic;
+    //[SerializeField] private AudioClip backgroundClip;
     private void FixedUpdate()
     {
          mouseRay = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
@@ -29,8 +29,8 @@ public class CameraController : MonoBehaviour
     }
     private void Start()
     {
-        backgroundMusic.clip = backgroundClip;
-        backgroundMusic.Play();
+        //backgroundMusic.clip = backgroundClip;
+        //backgroundMusic.Play();
     }
     void Awake()
     {
@@ -46,4 +46,12 @@ public class CameraController : MonoBehaviour
         //enabled = newGameState == GameState.Gameplay;
     }
 
+}
+
+public enum CameraDirection
+{
+	Left,
+	Top,
+	Right,
+	Bottom
 }
