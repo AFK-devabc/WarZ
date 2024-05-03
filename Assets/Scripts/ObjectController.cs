@@ -1,5 +1,7 @@
 
-public class ObjectController
+using UnityEngine;
+
+public class ObjectController : MonoBehaviour
 {
 	public readonly ObjectStat stat;
 }

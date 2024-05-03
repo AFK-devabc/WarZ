@@ -6,7 +6,7 @@ using UnityEngine;
 public class ProjectileController : MonoBehaviour
 {
     [SerializeField] public ProjectileStats projectileStats;
-    [SerializeField] protected ParticleSystem hitEffect;  
+    //[SerializeField] protected ParticleSystem hitEffect;  
     protected Action<ProjectileController> _killAction;
     protected float lifeTime = 1;
     public void InIt(Action<ProjectileController> killAction)
@@ -40,8 +40,8 @@ public class ProjectileController : MonoBehaviour
         else
         {
             _killAction(this);
-            if(projectileStats.shouldPlayHitEffect)
-                Instantiate(hitEffect, transform.position, Quaternion.identity);
+            //if(projectileStats.shouldPlayHitEffect)
+            //    Instantiate(hitEffect, transform.position, Quaternion.identity);
             return;
         }
 
@@ -51,8 +51,8 @@ public class ProjectileController : MonoBehaviour
             {
                 Debug.Log("hit");
                 transform.position = hit.point;
-                if (hitEffect != null)
-                    Instantiate(hitEffect, transform.position, Quaternion.identity);
+                //if (hitEffect != null)
+                //    Instantiate(hitEffect, transform.position, Quaternion.identity);
                 DoDamage(hit);
                 _killAction(this);
 
@@ -69,6 +69,6 @@ public class ProjectileController : MonoBehaviour
     }
     protected void DoDamage(RaycastHit hit)
     {
-        //hit.transform.GetComponent<HealthBehavior>()?.TakeDamage(projectileStats.damage);
-    }
+		hit.transform.GetComponent<BaseHealthBehavior>()?.ChangeHealth(-projectileStats.damage, 0);
+	}
 }

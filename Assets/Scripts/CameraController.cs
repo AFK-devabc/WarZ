@@ -18,8 +18,8 @@ public class CameraController : MonoBehaviour
     //[SerializeField] private AudioClip backgroundClip;
     private void FixedUpdate()
     {
-		mouseRay = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
-		if (Physics.Raycast(mouseRay, out RaycastHit hitInfo, float.MaxValue, mouseCollLayer))
+		mouseRay = m_camera.ScreenPointToRay(Mouse.current.position.ReadValue());
+		if (Physics.Raycast(mouseRay, out RaycastHit hitInfo, float.MaxValue, m_mouseCollLayer))
 		{
 			if(hitInfo.transform.tag == "Enemy")
 			{
@@ -27,10 +27,10 @@ public class CameraController : MonoBehaviour
 			}
 			else
 			{
-				Vector3 targetDireciton =  - player.position + hitInfo.point;
-				mouse.position = hitInfo.point;
-				Vector3 direction =( -player.position + hitInfo.point).normalized;
-				transform.position =  threshold * direction + player.position;
+				Vector3 targetDireciton =  -m_player.position + hitInfo.point;
+				m_mouse.position = hitInfo.point;
+				Vector3 direction =( -m_player.position + hitInfo.point).normalized;
+				transform.position = m_threshold * direction + m_player.position;
 			}
         }
     }
@@ -122,7 +122,7 @@ public class IsometricAiming : MonoBehaviour
         {
             var ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
-            if (Physics.Raycast(ray, out var hitInfo, Mathf.Infinity, groundMask))
+            if (Physics.Raycast(ray, out var hitInfo, Mathf.Infinity, targetMask))
             {
                 // The Raycast hit something, return with the position.
                 return (success: true, position: hitInfo.point);

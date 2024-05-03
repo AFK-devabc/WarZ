@@ -16,8 +16,8 @@ public class ChasingProjectile : ProjectileController
                 Debug.Log("hit");
                 _killAction(this);
                 transform.position = hit.point;
-                if (hitEffect != null)
-                    Instantiate(hitEffect, transform.position, Quaternion.identity);
+                //if (hitEffect != null)
+                //    Instantiate(hitEffect, transform.position, Quaternion.identity);
                 DoDamage(hit);
             }
         }

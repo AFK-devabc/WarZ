@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 
-public class BaseHealthBehavior
+public class BaseHealthBehavior : MonoBehaviour
 {
 	private BaseStat m_total;
 	private float m_current;
@@ -13,14 +13,18 @@ public class BaseHealthBehavior
 	{
 		m_total = new BaseStat(StatType.Health,i_total);
 	}
-
+	public void Init(float i_total)
+	{
+		m_total = new BaseStat(StatType.Health, i_total);
+		m_current = m_total.m_baseValue;
+	}
 	public void ChangeHealth(float i_amout,float i_tempAmount)
 	{
 		m_current =Mathf.Clamp(0,m_current + i_amout, m_total.m_finalValue);
-		m_OnHealthChangedEvent.Invoke(m_current, m_total.m_finalValue);
+		m_OnHealthChangedEvent?.Invoke(m_current, m_total.m_finalValue);
 		if(m_current == 0)
 		{
-			m_OnZeroHealthEvent.Invoke();
+			m_OnZeroHealthEvent?.Invoke();
 		}
 	}
 

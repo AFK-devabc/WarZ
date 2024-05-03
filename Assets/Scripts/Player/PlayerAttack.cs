@@ -14,7 +14,7 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private Animator animator;
     private ProjectileManager projectileManager;
     private bool canExcuteAttack;
-    [SerializeField] private AudioSource audio;
+    //[SerializeField] private AudioSource audio;
     private bool isPaused;
 
     private int currentAmmo;
@@ -41,23 +41,44 @@ public class PlayerAttack : MonoBehaviour
     private void Start()
     {
         projectileManager = ProjectileManager.GetInstance();
-        OnWeaponEquip();
+		weaponHolder.SetParent(RecursiveFindChild(transform, "Hand_R"));
+        //OnWeaponEquip();
         canExcuteAttack = true;
-        currentAmmo = totalAmmo;
+        currentAmmo = totalAmmo;		
     }
 
+	private Transform RecursiveFindChild(Transform parent, string childName)
+	{
+		foreach (Transform child in parent)
+		{
+			if (child.name == childName)
+			{
+				return child;
+			}
+			else
+			{
+				Transform found = RecursiveFindChild(child, childName);
+				if (found != null)
+				{
+					return found;
+				}
+			}
+		}
+		return null;
+	}
 
-    public void ExcuteAttack(InputAction.CallbackContext context)
+
+	public void OnClick(InputValue context)
     {
-        if (context.performed && canExcuteAttack && enabled&& !isLoadingAmmo)
+        if (context.isPressed && canExcuteAttack && enabled&& !isLoadingAmmo)
         {
             if (currentAmmo > 0)
             {
                 ProjectileController bullet = projectileManager.GetProjectile(weapon.projectilePrefab);
-                audio.clip = weapon.gunSound;
-                audio.Play();
+                //audio.clip = weapon.gunSound;
+                //audio.Play();
                 bullet.transform.position = shootPoint.position;
-                bullet.transform.LookAt(new Vector3(target.position.x, shootPoint.position.y, target.position.z));
+                bullet.transform.forward = shootPoint.forward;
                 StartCoroutine(AttackCountdown());
                 currentAmmo--;
             }
@@ -69,6 +90,7 @@ public class PlayerAttack : MonoBehaviour
     }
     public void ReloadAmmo()
     {
+		Debug.Log("Reloading ammo");
         isLoadingAmmo = true;
         StartCoroutine(ReloadAmmoCountdown());
         isLoadingAmmo = false;
@@ -79,8 +101,8 @@ public class PlayerAttack : MonoBehaviour
     }
     private IEnumerator ReloadAmmoCountdown()
     {
-        audio.clip = reloadAmmoSound;
-        audio.Play();
+        //GetComponent<AudioSource>().clip = reloadAmmoSound;
+        //GetComponent<AudioSource>().Play();
         yield return new WaitForSeconds(reloadTime);
         currentAmmo = totalAmmo;
     }
