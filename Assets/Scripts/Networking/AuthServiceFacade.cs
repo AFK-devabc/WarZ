@@ -9,25 +9,31 @@ using static UnityEngine.Rendering.VolumeComponent;
 
 public class AuthServiceFacade 
 {
-	public InitializationOptions GenerateAuthenticationOptions(string profile)
+	private LocalLobbyUser m_LocalLobbyUser;
+	
+	public AuthServiceFacade(LocalLobbyUser i_localLobbyUser)
 	{
-		try
-		{
-			var unityAuthenticationInitOptions = new InitializationOptions();
-			if (profile.Length > 0)
-			{
-				unityAuthenticationInitOptions.SetProfile(profile);
-			}
-
-			return unityAuthenticationInitOptions;
-		}
-		catch (Exception e)
-		{
-			var reason = e.InnerException == null ? e.Message : $"{e.Message} ({e.InnerException.Message})";
-			m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Authentication Error", reason, UnityServiceErrorMessage.Service.Authentication, e));
-			throw;
-		}
+		m_LocalLobbyUser = i_localLobbyUser;
 	}
+	//public InitializationOptions GenerateAuthenticationOptions(string profile)
+	//{
+	//	try
+	//	{
+	//		var unityAuthenticationInitOptions = new InitializationOptions();
+	//		if (profile.Length > 0)
+	//		{
+	//			unityAuthenticationInitOptions.SetProfile(profile);
+	//		}
+
+	//		return unityAuthenticationInitOptions;
+	//	}
+	//	catch (Exception e)
+	//	{
+	//		var reason = e.InnerException == null ? e.Message : $"{e.Message} ({e.InnerException.Message})";
+	//		m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Authentication Error", reason, UnityServiceErrorMessage.Service.Authentication, e));
+	//		throw;
+	//	}
+	//}
 
 	public async Task InitializeAndSignInAsync(InitializationOptions initializationOptions)
 	{
@@ -36,6 +42,10 @@ public class AuthServiceFacade
 			if (!AuthenticationService.Instance.IsSignedIn)
 			{
 				await AuthenticationService.Instance.SignInAnonymouslyAsync();
+
+				m_LocalLobbyUser.ID = AuthenticationService.Instance.PlayerId;
+				Debug.Log(m_LocalLobbyUser.ID);
+				
 			}
 		}
 		catch (Exception e)
@@ -43,26 +53,26 @@ public class AuthServiceFacade
 		}
 	}
 
-	public async Task SwitchProfileAndReSignInAsync(string profile)
-	{
-		if (AuthenticationService.Instance.IsSignedIn)
-		{
-			AuthenticationService.Instance.SignOut();
-		}
+	//public async Task SwitchProfileAndReSignInAsync(string profile)
+	//{
+	//	if (AuthenticationService.Instance.IsSignedIn)
+	//	{
+	//		AuthenticationService.Instance.SignOut();
+	//	}
 
-		AuthenticationService.Instance.SwitchProfile(profile);
+	//	AuthenticationService.Instance.SwitchProfile(profile);
 
-		try
-		{
-			await AuthenticationService.Instance.SignInAnonymouslyAsync();
-		}
-		catch (Exception e)
-		{
-			var reason = e.InnerException == null ? e.Message : $"{e.Message} ({e.InnerException.Message})";
-			m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Authentication Error", reason, UnityServiceErrorMessage.Service.Authentication, e));
-			throw;
-		}
-	}
+	//	try
+	//	{
+	//		await AuthenticationService.Instance.SignInAnonymouslyAsync();
+	//	}
+	//	catch (Exception e)
+	//	{
+	//		var reason = e.InnerException == null ? e.Message : $"{e.Message} ({e.InnerException.Message})";
+	//		m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Authentication Error", reason, UnityServiceErrorMessage.Service.Authentication, e));
+	//		throw;
+	//	}
+	//}
 
 	public async Task<bool> EnsurePlayerIsAuthorized()
 	{
