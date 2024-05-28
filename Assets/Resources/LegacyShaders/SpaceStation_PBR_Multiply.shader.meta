@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 379c1070b49fc7e4b961df5119ca6d13
+timeCreated: 1531078372
+licenseType: Store
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures:
+  - _MainTex: {instanceID: 0}
+  - _MetallicGlossMap: {instanceID: 0}
+  - _EmissionMap: {instanceID: 0}
+  - _BumpMap: {instanceID: 0}
+  - _ColorMask: {instanceID: 0}
+  - _TemperatureMask: {fileID: 2800000, guid: 661811ea92622194ca8fd3fad893bd74, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
