@@ -40,10 +40,10 @@ namespace Synty.Interface.Samples
 
         private void Update()
         {
-            for (int i = 0; i < sliders.Count; i++)
-            {
-                sliders[i].value = (Mathf.Sin((Time.time * speed) + (i * offset)) * 0.5f) + 0.5f;
-            }
+            //for (int i = 0; i < sliders.Count; i++)
+            //{
+            //    sliders[i].value = (Mathf.Sin((Time.time * speed) + (i * offset)) * 0.5f) + 0.5f;
+            //}
         }
     }
 }
