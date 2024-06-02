@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ProjectileController : MonoBehaviour
@@ -9,23 +10,34 @@ public class ProjectileController : MonoBehaviour
     //[SerializeField] protected ParticleSystem hitEffect;  
     protected Action<ProjectileController> _killAction;
     protected float lifeTime = 1;
-    public void InIt(Action<ProjectileController> killAction)
+
+	private TrailRenderer[] trailRenderers = null;
+
+	public void Init(Action<ProjectileController> killAction)
     {
         _killAction = killAction;
-        //GameStateManager.Instance.OnGameStateChanged += OnGameStateChanged;
-
+		//GameStateManager.Instance.OnGameStateChanged += OnGameStateChanged;
+		trailRenderers = GetComponentsInChildren<TrailRenderer>();
     }
     private void OnGameStateChanged(GameState newGameState)
     {
         //enabled = newGameState == GameState.Gameplay;
     }
 
-    private void OnEnable()
-    {
-        lifeTime = projectileStats.lifeTime;
+	public void ResetState(Transform shootPoint)
+	{
+		lifeTime = projectileStats.lifeTime;
 
-    }
-    private void OnDestroy()
+		transform.position = shootPoint.position;
+		transform.forward = shootPoint.forward;
+		foreach (var trailRenderer in trailRenderers)
+		{
+			trailRenderer.Clear();
+		}
+
+	}
+
+	private void OnDestroy()
     {
         //GameStateManager.Instance.OnGameStateChanged -= OnGameStateChanged;
     }
@@ -39,7 +51,7 @@ public class ProjectileController : MonoBehaviour
         }
         else
         {
-            _killAction(this);
+            _killAction?.Invoke(this);
             //if(projectileStats.shouldPlayHitEffect)
             //    Instantiate(hitEffect, transform.position, Quaternion.identity);
             return;
@@ -53,7 +65,7 @@ public class ProjectileController : MonoBehaviour
                 transform.position = hit.point;
                 //if (hitEffect != null)
                 //    Instantiate(hitEffect, transform.position, Quaternion.identity);
-                DoDamage(hit);
+                //DoDamage(hit);
                 _killAction(this);
 
             }
