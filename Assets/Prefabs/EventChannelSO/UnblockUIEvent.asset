@@ -9,16 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 94d934bb4d7dbf242b24d745d081772a, type: 3}
-  m_Name: BulletStat
+  m_Script: {fileID: 11500000, guid: 7c3d65463c412d84999d3c0b35d6c9df, type: 3}
+  m_Name: UnblockUIEvent
   m_EditorClassIdentifier: 
-  id: 1
-  movSpeed: 15
-  hitMask:
-    serializedVersion: 2
-    m_Bits: 256
-  damage: 1
-  lifeTime: 3
-  shouldPlayHitEffect: 0
-  cooldownTime: 0.2
-  priceToUpgrape: 0
