@@ -4,6 +4,9 @@ using Unity.Services.Authentication;
 using Unity.Services.Lobbies.Models;
 using Unity.Services.Lobbies;
 using UnityEngine;
+using System;
+using UnityEngine.Events;
+
 
 /// <summary>
 /// An abstraction layer between the direct calls into the Lobby API and the outcomes you actually want.
@@ -100,6 +103,8 @@ public class LobbyServiceFacade
 	/// </summary>
 	public void EndTracking()
 	{
+		Utils.OnLeaveLobbySuccessEvent?.Invoke();
+
 		if (m_IsTracking)
 		{
 			m_IsTracking = false;
@@ -139,6 +144,7 @@ public class LobbyServiceFacade
 		try
 		{
 			var lobby = await m_LobbyApiInterface.CreateLobby(AuthenticationService.Instance.PlayerId, lobbyName, maxPlayers, isPrivate, m_LocalUser.GetDataForUnityServices(), m_LocalLobby.GetDataForUnityServices()) ;
+			Utils.OnJoinLobbySuccessEvent?.Invoke();
 			return (true, lobby);
 		}
 		catch (LobbyServiceException e)
@@ -175,13 +181,9 @@ public class LobbyServiceFacade
 				JoinLobbyByCodeOptions options = new JoinLobbyByCodeOptions();
 				options.Player =new Player(id:m_LocalUser.ID, data: m_LocalUser.GetDataForUnityServices());
 				var lobby = await m_LobbyApiInterface.JoinLobbyByCode(lobbyCode, options);
+				Utils.OnJoinLobbySuccessEvent?.Invoke();
 				return (true, lobby);
 			}
-			//else
-			//{
-			//	var lobby = await m_LobbyApiInterface.JoinLobbyById(lobbyId, m_LocalUser.GetDataForUnityServices());
-			//	return (true, lobby);
-			//}
 		}
 		catch (LobbyServiceException e)
 		{
@@ -201,6 +203,9 @@ public class LobbyServiceFacade
 	void ResetLobby()
 	{
 		CurrentUnityLobby = null;
+
+
+
 		if (m_LocalUser != null)
 		{
 			m_LocalUser.ResetState();
@@ -299,6 +304,9 @@ public class LobbyServiceFacade
 	async void LeaveLobbyAsync()
 	{
 		string uasId = AuthenticationService.Instance.PlayerId;
+
+
+
 		try
 		{
 			await m_LobbyApiInterface.RemovePlayerFromLobby(uasId, m_LocalLobby.LobbyID);
@@ -398,9 +406,9 @@ public class LobbyServiceFacade
 	}
 
 	/// <summary>
-	/// Attempt to update the set of key-value pairs associated with a given lobby and unlocks it so clients can see it.
+	/// Attempt to update the set of key-value pairs associated with a given lobby and unlocks or unlocl it so clients can see it.
 	/// </summary>
-	public async Task UpdateLobbyDataAndUnlockAsync()
+	public async Task UpdateLobbyDataAndChangeLockStatusAsync(bool shouldLock = false)
 	{
 		if (!m_RateLimitQuery.CanCall)
 		{
@@ -429,7 +437,7 @@ public class LobbyServiceFacade
 
 		try
 		{
-			var result = await m_LobbyApiInterface.UpdateLobby(CurrentUnityLobby.Id, dataCurr, i_shouldLock: false);
+			var result = await m_LobbyApiInterface.UpdateLobby(CurrentUnityLobby.Id, dataCurr, i_shouldLock: shouldLock);
 
 			if (result != null)
 			{

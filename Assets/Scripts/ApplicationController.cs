@@ -16,8 +16,6 @@ public class ApplicationController : MonoBehaviour
 	public ServicesManager m_ServicesManager { private set; get; }
 	public UpdateRunner m_UpdateRunner { private set; get; }
 
-	[SerializeField] private VoidEventChannelSO m_LeaveLobbyEvent;
-
 	[SerializeField] private NetworkManager m_NetworkManager;
 
 	ServerBrowser m_ServerBrowser;
@@ -87,7 +85,7 @@ public class ApplicationController : MonoBehaviour
 		// We want to quit anyways, so if anything happens while trying to leave the Lobby, log the exception then carry on
 		try
 		{
-			m_LeaveLobbyEvent.RaiseEvent();
+			Utils.OnLeaveLobbySuccessEvent?.Invoke();
 			m_ServicesManager.m_lobbyServiceFacade.EndTracking();
 		}
 		catch (Exception e)

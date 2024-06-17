@@ -24,10 +24,9 @@ public class LobbyCharacter : MonoBehaviour
 
 	public void Initialized(LocalLobbyUser i_LocalUsers)
 	{
-		m_leaveCustomCharacterEvent.OnEventRaised += () =>
+		Utils.OnLeaveCustomCharacterEvent+= () =>
 		{
 			m_inputField.readOnly = false;
-
 		};
 
 		m_localLobbyUser = i_LocalUsers;
@@ -166,11 +165,9 @@ public class LobbyCharacter : MonoBehaviour
 		return null;
 	}
 
-	[SerializeField] private VoidEventChannelSO m_enterCustomCharacterEvent;
-	[SerializeField] private VoidEventChannelSO m_leaveCustomCharacterEvent;
 	public void OnCharacterClicked()
 	{
-		m_enterCustomCharacterEvent?.RaiseEvent();
+		Utils.OnEnterCustomCharacterEvent?.Invoke();
 		m_inputField.readOnly = true;
 
 	}

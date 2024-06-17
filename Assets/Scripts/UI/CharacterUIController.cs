@@ -9,8 +9,6 @@ public class CharacterUIController : MonoBehaviour
 	[SerializeField] private Transform weaponContainer;
 	[SerializeField] private UIWeaponHolder weaponHolder;
 
-	[SerializeField] private VoidEventChannelSO m_LeaveCustomCharacterEvent;
-
 	[SerializeField] private LobbyCharacter m_localLobbyCharacter;
 
 	private void Start()
@@ -25,7 +23,7 @@ public class CharacterUIController : MonoBehaviour
 
 	public void OnLeaveButtonClicked()
 	{
-		m_LeaveCustomCharacterEvent.RaiseEvent();
+		Utils.OnLeaveCustomCharacterEvent?.Invoke();
 	}
 
 	public void OnNextCharacterButtonClicked(bool isNext)

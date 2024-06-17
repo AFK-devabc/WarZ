@@ -2,11 +2,6 @@ using UnityEngine;
 
 public class CameraInMM : MonoBehaviour
 {
-	[SerializeField] private VoidEventChannelSO m_joinLobbyEvent;
-	[SerializeField] private VoidEventChannelSO m_leaveLobbyEvent;
-	[SerializeField] private VoidEventChannelSO m_enterCustomCharacterEvent;
-	[SerializeField] private VoidEventChannelSO m_leaveCustomCharacterEvent;
-
 	private CameraState m_state;
 
 	[SerializeField] private Transform m_transform;
@@ -17,10 +12,10 @@ public class CameraInMM : MonoBehaviour
 	private void Start()
 	{
 		m_state = CameraState.MAINMENU;
-		m_joinLobbyEvent.OnEventRaised += OnJoinLobbyEvent;
-		m_leaveLobbyEvent.OnEventRaised += OnLeaveLobbyEvent;
-		m_enterCustomCharacterEvent.OnEventRaised += OnEnterCustomCharacterEvent;
-		m_leaveCustomCharacterEvent.OnEventRaised += OnLeaveCustomCharacterEvent;
+		Utils.OnJoinLobbySuccessEvent+= OnJoinLobbyEvent;
+		Utils.OnLeaveLobbySuccessEvent += OnLeaveLobbyEvent;
+		Utils.OnEnterCustomCharacterEvent += OnEnterCustomCharacterEvent;
+		Utils.OnLeaveCustomCharacterEvent += OnLeaveCustomCharacterEvent;
 	}
 
 	private void FixedUpdate()
@@ -47,10 +42,10 @@ public class CameraInMM : MonoBehaviour
 
 	private void OnDisable()
 	{
-		m_joinLobbyEvent.OnEventRaised -= OnJoinLobbyEvent;
-		m_leaveLobbyEvent.OnEventRaised -= OnLeaveLobbyEvent;
-		m_enterCustomCharacterEvent.OnEventRaised -= OnEnterCustomCharacterEvent;
-		m_leaveCustomCharacterEvent.OnEventRaised -= OnLeaveCustomCharacterEvent;
+		Utils.OnJoinLobbySuccessEvent -= OnJoinLobbyEvent;
+		Utils.OnLeaveLobbySuccessEvent -= OnLeaveLobbyEvent;
+		Utils.OnEnterCustomCharacterEvent -= OnEnterCustomCharacterEvent;
+		Utils.OnLeaveCustomCharacterEvent -= OnLeaveCustomCharacterEvent;
 	}
 
 	private void OnJoinLobbyEvent()

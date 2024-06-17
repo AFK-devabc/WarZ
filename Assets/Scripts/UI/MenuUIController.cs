@@ -20,12 +20,6 @@ public class MainMenuUIController : MonoBehaviour
 
 	ApplicationController applicationController;
 
-	[SerializeField] private VoidEventChannelSO m_JoinLobbyEvent;
-	[SerializeField] private VoidEventChannelSO m_LeaveLobbyEvent;
-	[SerializeField] private VoidEventChannelSO m_EnterCustomCharacterEvent;
-	[SerializeField] private VoidEventChannelSO m_LeaveCustomCharacterEvent;
-
-
 	[SerializeField] private VoidEventChannelSO m_BlockUIEvent;
 	[SerializeField] private VoidEventChannelSO m_UnblockUIEvent;
 
@@ -33,15 +27,27 @@ public class MainMenuUIController : MonoBehaviour
 	{
 		applicationController = GameObject.Find("ApplicationController").GetComponent<ApplicationController>();
 
-		m_JoinLobbyEvent.OnEventRaised += ShowLobbyUI;
-		m_LeaveLobbyEvent.OnEventRaised += ShowMainMenuUI;
-		m_EnterCustomCharacterEvent.OnEventRaised += ShowCustomCharacterUI;
-		m_LeaveCustomCharacterEvent.OnEventRaised += ShowMainMenuUI;
 
 		m_BlockUIEvent.OnEventRaised += BlockUIAndShowLoadingInProgress;
 		m_UnblockUIEvent.OnEventRaised += UnblockUIAndHideLoadingInProgress;
 
 		ShowMainMenuUI();
+	}
+
+	private void OnEnable()
+	{
+		Utils.OnJoinLobbySuccessEvent += ShowLobbyUI;
+		Utils.OnLeaveLobbySuccessEvent += ShowMainMenuUI;
+		Utils.OnEnterCustomCharacterEvent += ShowCustomCharacterUI;
+		Utils.OnLeaveCustomCharacterEvent += ShowMainMenuUI;
+	}
+
+	private void OnDisable()
+	{
+		Utils.OnJoinLobbySuccessEvent -= ShowLobbyUI;
+		Utils.OnLeaveLobbySuccessEvent -= ShowMainMenuUI;
+		Utils.OnEnterCustomCharacterEvent -= ShowCustomCharacterUI;
+		Utils.OnLeaveCustomCharacterEvent -= ShowMainMenuUI;
 	}
 
 	public void ShowMainMenuUI()

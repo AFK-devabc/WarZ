@@ -9,23 +9,20 @@ public class LobbyCharacterController : MonoBehaviour
 
 	private LocalLobby m_LocalLobby;
 
-	[SerializeField] private VoidEventChannelSO m_JoinLobbyEvent;
-	[SerializeField] private VoidEventChannelSO m_LeaveLobbyEvent;
-
 	private void Start()
 	{
 		ApplicationController applicationController = GameObject.Find("ApplicationController").GetComponent<ApplicationController>();
 		m_LocalLobby = applicationController.m_LocalLobby;
 		m_MMCharacter.Initialized(applicationController.m_LocalLobbyUser);
 
-		m_JoinLobbyEvent.OnEventRaised += OnJoinedLobby;
-		m_LeaveLobbyEvent.OnEventRaised += OnLeavedLobby;
+		Utils.OnJoinLobbySuccessEvent+= OnJoinedLobby;
+		Utils.OnLeaveLobbySuccessEvent += OnLeavedLobby;
 	}
 
 	private void OnDisable()
 	{
-		m_JoinLobbyEvent.OnEventRaised -= OnJoinedLobby;
-		m_LeaveLobbyEvent.OnEventRaised -= OnLeavedLobby;
+		Utils.OnJoinLobbySuccessEvent -= OnJoinedLobby;
+		Utils.OnLeaveLobbySuccessEvent -= OnLeavedLobby;
 
 		OnLeavedLobby();
 	}
