@@ -35,38 +35,38 @@ public sealed class LocalLobby
 	{
 		public string LobbyID { get; set; }
 		public string LobbyCode { get; set; }
-		public string RelayJoinCode { get; set; }
 		public string LobbyName { get; set; }
 		public bool Private { get; set; }
 		public int MaxPlayerCount { get; set; }
 		public string IsStarted { get; set; }
 		public string ServerIP { get; set; }
-		public string ServerListenPort { get; set; }
+		public string ServerPort { get; set; }
+		public string ServerListenAddress { get; set; }
 
 		public LobbyData(LobbyData existing)
 		{
 			LobbyID = existing.LobbyID;
 			LobbyCode = existing.LobbyCode;
-			RelayJoinCode = existing.RelayJoinCode;
 			LobbyName = existing.LobbyName;
 			Private = existing.Private;
 			MaxPlayerCount = existing.MaxPlayerCount;
 			IsStarted = existing.IsStarted;
 			ServerIP = existing.ServerIP;
-			ServerListenPort = existing.ServerListenPort;
+			ServerPort = existing.ServerPort;
+			ServerListenAddress = existing.ServerListenAddress;
 		}
 
 		public LobbyData(string lobbyCode)
 		{
 			LobbyID = null;
 			LobbyCode = lobbyCode;
-			RelayJoinCode = null;
 			LobbyName = null;
 			Private = false;
 			MaxPlayerCount = -1;
 			IsStarted = "False";
 			ServerIP = null;
-			ServerListenPort = null;
+			ServerPort = null;
+			ServerListenAddress = null;
 		}
 	}
 
@@ -136,16 +136,6 @@ public sealed class LocalLobby
 		}
 	}
 
-	public string RelayJoinCode
-	{
-		get => m_Data.RelayJoinCode;
-		set
-		{
-			m_Data.RelayJoinCode = value;
-			OnChanged();
-		}
-	}
-
 	public string LobbyName
 	{
 		get => m_Data.LobbyName;
@@ -197,12 +187,21 @@ public sealed class LocalLobby
 			OnChanged();
 		}
 	}
-	public string ServerListenPort
+	public string ServerPort
 	{
-		get => m_Data.ServerListenPort;
+		get => m_Data.ServerPort;
 		set
 		{
-			m_Data.ServerListenPort = value;
+			m_Data.ServerPort = value;
+			OnChanged();
+		}
+	}
+	public string ServerListenAddress
+	{
+		get => m_Data.ServerListenAddress;
+		set
+		{
+			m_Data.ServerListenAddress = value;
 			OnChanged();
 		}
 	}
@@ -251,11 +250,10 @@ public sealed class LocalLobby
 	public Dictionary<string, DataObject> GetDataForUnityServices() =>
 		new Dictionary<string, DataObject>()
 		{
-				{"RelayJoinCode", new DataObject(DataObject.VisibilityOptions.Public,  RelayJoinCode)},
-				{LobbyDataDefined.m_Map, new DataObject(DataObject.VisibilityOptions.Public,  RelayJoinCode)},
 				{LobbyDataDefined.m_IsStarted, new DataObject(DataObject.VisibilityOptions.Public,  IsStarted)},
 				{LobbyDataDefined.m_ServerIP, new DataObject(DataObject.VisibilityOptions.Public,  ServerIP)},
-				{LobbyDataDefined.m_ServerPort, new DataObject(DataObject.VisibilityOptions.Public,  ServerListenPort)},
+				{LobbyDataDefined.m_ServerPort, new DataObject(DataObject.VisibilityOptions.Public,  ServerPort)},
+				{LobbyDataDefined.m_ServerListenAddress, new DataObject(DataObject.VisibilityOptions.Public,  ServerListenAddress)},
 		};
 
 	public void ApplyRemoteData(Lobby lobby)
@@ -269,15 +267,11 @@ public sealed class LocalLobby
 
 		if (lobby.Data != null)
 		{
-			info.RelayJoinCode = lobby.Data.ContainsKey("RelayJoinCode") ? lobby.Data["RelayJoinCode"].Value : null; // By providing RelayCode through the lobby data with Member visibility, we ensure a client is connected to the lobby before they could attempt a relay connection, preventing timing issues between them.
-			info.ServerIP = lobby.Data.ContainsKey(LobbyDataDefined.m_ServerIP) ? lobby.Data[LobbyDataDefined.m_ServerIP].Value : null; // By providing RelayCode through the lobby data with Member visibility, we ensure a client is connected to the lobby before they could attempt a relay connection, preventing timing issues between them.
-			info.ServerListenPort = lobby.Data.ContainsKey(LobbyDataDefined.m_ServerPort) ? lobby.Data[LobbyDataDefined.m_ServerPort].Value : null; // By providing RelayCode through the lobby data with Member visibility, we ensure a client is connected to the lobby before they could attempt a relay connection, preventing timing issues between them.
-			info.IsStarted = lobby.Data.ContainsKey(LobbyDataDefined.m_IsStarted) ? lobby.Data[LobbyDataDefined.m_IsStarted].Value : null; // By providing RelayCode through the lobby data with Member visibility, we ensure a client is connected to the lobby before they could attempt a relay connection, preventing timing issues between them.
+			info.ServerIP = lobby.Data.ContainsKey(LobbyDataDefined.m_ServerIP) ? lobby.Data[LobbyDataDefined.m_ServerIP].Value : null;
+			info.ServerPort = lobby.Data.ContainsKey(LobbyDataDefined.m_ServerPort) ? lobby.Data[LobbyDataDefined.m_ServerPort].Value : null;
+			info.ServerListenAddress = lobby.Data.ContainsKey(LobbyDataDefined.m_ServerListenAddress) ? lobby.Data[LobbyDataDefined.m_ServerListenAddress].Value : null; 
+			info.IsStarted = lobby.Data.ContainsKey(LobbyDataDefined.m_IsStarted) ? lobby.Data[LobbyDataDefined.m_IsStarted].Value : null;
 
-		}
-		else
-		{
-			info.RelayJoinCode = null;
 		}
 
 		var lobbyUsers = new Dictionary<string, LocalLobbyUser>();
@@ -302,7 +296,6 @@ public sealed class LocalLobby
 				ID = player.Id,
 				CharacterIndex = player.Data[PlayerDataDefined.m_CharacterIndex].Value,
 				WeaponIndex = player.Data[PlayerDataDefined.m_Weapon].Value,
-
 			};
 
 			lobbyUsers.Add(incomingData.ID, incomingData);
@@ -324,5 +317,5 @@ static class LobbyDataDefined
 	public const string m_IsStarted = "Have started";
 	public const string m_ServerIP = "Server IP";
 	public const string m_ServerPort = "Server Port";
-
+	public const string m_ServerListenAddress= "Server Listen Address";
 }
