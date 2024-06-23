@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c94eeaa0dbcb5ec44a85a6602d156712, type: 3}
+  m_Name: M16A4
+  m_EditorClassIdentifier: 
+  Name: M16A4
+  type: 2
+  avatar: {fileID: 21300000, guid: e713fa6769be8884781c361a06c7bc7c, type: 3}
+  ingameAvatar: {fileID: 21300000, guid: c5e6a8060af8d1e4198f9147f346f024, type: 3}
+  projectileModel: {fileID: 8080833590343433200, guid: 5042813f66729554ba8ccb8d46474175, type: 3}
+  weaponModel: {fileID: 8879262083939769021, guid: 6f9a5037b7e8b604c91ec3d776132984, type: 3}
+  sound: {fileID: 0}
+  animator: {fileID: 22100000, guid: dd6a65b887c997349bfa67c0d2bf1d69, type: 2}
+  stats:
+  - {fileID: 11400000, guid: d9147a7d5497cdd418a9210869a41d67, type: 2}

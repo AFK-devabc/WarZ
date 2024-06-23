@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c94eeaa0dbcb5ec44a85a6602d156712, type: 3}
+  m_Name: Sawed-off
+  m_EditorClassIdentifier: 
+  Name: Sawed-off
+  type: 1
+  avatar: {fileID: 21300000, guid: 9c259ffaa41ac9845a0859bd872d28f1, type: 3}
+  ingameAvatar: {fileID: 21300000, guid: 3c1820623094a734c971487b00169019, type: 3}
+  projectileModel: {fileID: 8080833590343433200, guid: 5042813f66729554ba8ccb8d46474175, type: 3}
+  weaponModel: {fileID: 3011731800076896709, guid: 80570266fe279ea4596a24a1a0b8322f, type: 3}
+  sound: {fileID: 0}
+  animator: {fileID: 22100000, guid: 6ade3e126600943489057101141e3d8f, type: 2}
+  stats:
+  - {fileID: 11400000, guid: 7a233bc284187744fb2a1f3ec10f39bb, type: 2}

@@ -61,9 +61,12 @@ public class TopDownCamera : MonoBehaviour {
         {
             CreateMinimap();
         }
-    }
-	
-    public void CreateMinimap()
+
+		this.TargetToFollow = Utils.m_localNetworkPlayer.transform;
+		Utils.m_localNetworkPlayer?.GetComponent<PlayerController>().SetCamera(this);
+	}
+
+	public void CreateMinimap()
     {
         if (!currentMinimap)
         {
@@ -111,7 +114,7 @@ public class TopDownCamera : MonoBehaviour {
         actualExpShakeTimer = shakeExpTimer;
     }
 
-    protected virtual void LateUpdate()
+    protected virtual void FixedUpdate()
     {
         if (TargetToFollow)
         {

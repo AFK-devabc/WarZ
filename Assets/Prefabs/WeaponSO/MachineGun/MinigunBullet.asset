@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94d934bb4d7dbf242b24d745d081772a, type: 3}
+  m_Name: MinigunBullet
+  m_EditorClassIdentifier: 
+  <id>k__BackingField: 5aec4474-002a-43ac-b916-1a0db2a59ff1
+  movSpeed: 25
+  hitMask:
+    serializedVersion: 2
+    m_Bits: 256
+  damage: 7
+  projectilePerShoot: 1
+  ammo: 100
+  lifeTime: 3
+  startTime: 2
+  delayTime: 0.1
+  reloadTime: 2
