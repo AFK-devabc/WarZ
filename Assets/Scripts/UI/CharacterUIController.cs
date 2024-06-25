@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CharacterUIController : MonoBehaviour
 {
-	[SerializeField] private WeaponHolderSO weaponsHolder;
+	[SerializeField] private WeaponContainerSO weaponsHolder;
 
 	[SerializeField] private Transform weaponContainer;
 	[SerializeField] private UIWeaponHolder weaponHolder;

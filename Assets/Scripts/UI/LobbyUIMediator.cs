@@ -1,11 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class LobbyUIMediator : MonoBehaviour
 {
@@ -47,13 +42,13 @@ public class LobbyUIMediator : MonoBehaviour
 		if (!m_isSignedin)
 		{
 			m_UnblockUIEvent.RaiseEvent();
-			m_MainMenuUIController.ShowPopupWithMessage("Error","Please log-in first!");
+			m_MainMenuUIController.ShowPopupWithMessage("Error", "Please log-in first!");
 			return;
 		}
 
-		var m_createLobbyResult = await m_ServicesManager.m_lobbyServiceFacade.TryCreateLobbyAsync("Lobby", 4,false);
+		var m_createLobbyResult = await m_ServicesManager.m_lobbyServiceFacade.TryCreateLobbyAsync("Lobby", 4, false);
 
-		if(!m_createLobbyResult.Success)
+		if (!m_createLobbyResult.Success)
 		{
 			m_UnblockUIEvent.RaiseEvent();
 			m_MainMenuUIController.ShowPopupWithMessage("Error", "Could not create new lobby, please try again!");
@@ -66,14 +61,14 @@ public class LobbyUIMediator : MonoBehaviour
 		m_ServicesManager.m_lobbyServiceFacade.SetRemoteLobby(m_createLobbyResult.Lobby);
 		m_ServicesManager.m_lobbyServiceFacade.BeginTracking();
 
-		m_ServicesManager.m_lobbyServiceFacade.UpdateLobbyDataAndChangeLockStatusAsync(false);
+	 await	m_ServicesManager.m_lobbyServiceFacade.UpdateLobbyDataAndChangeLockStatusAsync(false);
 		Debug.Log($"Created lobby with ID: {m_LocalLobby.LobbyID} and code {m_LocalLobby.LobbyCode}");
 
 		m_UnblockUIEvent.RaiseEvent();
 
 	}
 
-	public async void LeaveLobby()
+	public void LeaveLobby()
 	{
 		m_ServicesManager.m_lobbyServiceFacade.EndTracking();
 		m_LocalLobby.changed -= CheckIfGameStarted;
@@ -118,7 +113,7 @@ public class LobbyUIMediator : MonoBehaviour
 		else
 			m_localLobbyUser.IsReady = "true";
 
-		await m_ServicesManager.m_lobbyServiceFacade.UpdatePlayerDataAsync("","");
+		await m_ServicesManager.m_lobbyServiceFacade.UpdatePlayerDataAsync("", "");
 	}
 
 	public async void StartGame()
@@ -132,13 +127,15 @@ public class LobbyUIMediator : MonoBehaviour
 			}
 		}
 
+		LoadingUIController.GetInstance().LoadTask("Joining game", 0.75f);
+
 		m_ServicesManager.m_multiplayServiceFacade.StartHost();
 
 		m_LocalLobby.IsStarted = "true";
 		var data = NetworkManager.Singleton.GetComponent<UnityTransport>().ConnectionData;
 		m_LocalLobby.ServerIP = data.Address;
 		m_LocalLobby.ServerPort = data.Port.ToString();
-		m_LocalLobby.ServerListenAddress= data.ServerListenAddress;
+		m_LocalLobby.ServerListenAddress = data.ServerListenAddress;
 
 
 		await m_ServicesManager.m_lobbyServiceFacade.UpdateLobbyDataAndChangeLockStatusAsync(true);
@@ -146,9 +143,12 @@ public class LobbyUIMediator : MonoBehaviour
 
 	public void CheckIfGameStarted(LocalLobby localLobby)
 	{
-		if(localLobby.IsStarted == "true")
+		if (localLobby.IsStarted == "true")
+		{
 			m_ServicesManager.m_multiplayServiceFacade.StartClient(localLobby);
+			LoadingUIController.GetInstance().LoadTask("Joining game", 0.75f);
 
+		}
 	}
 
 }

@@ -1,12 +1,9 @@
 using System;
 using System.Collections;
 using Unity.Netcode;
+using Unity.Services.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections.Generic;
-using Unity.Services.Core;
-using Unity.Services.Multiplay;
-using Unity.Netcode.Transports.UTP;
 
 
 public class ApplicationController : MonoBehaviour
@@ -20,22 +17,29 @@ public class ApplicationController : MonoBehaviour
 
 	ServerBrowser m_ServerBrowser;
 
-	private async void Awake()
-	{
-		m_ServicesManager = new ServicesManager();
+	#region singleton
+	private static ApplicationController m_instance = null;
+	public static ApplicationController GetInstance() { return m_instance; }
 
-		if (UnityServices.State != ServicesInitializationState.Initialized)
+	private void Awake()
+	{
+		if (m_instance == null)
 		{
-			await UnityServices.InitializeAsync();
-			//m_ServicesManager.Initialize(m_LocalLobby, m_LocalLobbyUser, m_UpdateRunner);
+			m_instance = this;
+			DontDestroyOnLoad(gameObject);
 		}
-		m_ServerBrowser = new ServerBrowser();
-		m_ServerBrowser.SearchForServer();
-
-
+		else
+		{
+			Destroy(this);
+			return;
+		}
 	}
-	private void Start()
+	#endregion //singleton
+
+	private async void Start()
 	{
+		await UnityServices.InitializeAsync();
+
 #if !DEDICATED_SERVER
 
 		m_ServicesManager = new ServicesManager();
@@ -46,7 +50,7 @@ public class ApplicationController : MonoBehaviour
 
 		m_LocalLobby = new LocalLobby();
 		m_LocalLobbyUser = new LocalLobbyUser();
-		m_UpdateRunner = new UpdateRunner();
+		m_UpdateRunner = gameObject.AddComponent<UpdateRunner>();
 
 		int randomnumber = UnityEngine.Random.Range(0, 100);
 		m_LocalLobbyUser.DisplayName = "Player" + randomnumber.ToString();
@@ -55,7 +59,9 @@ public class ApplicationController : MonoBehaviour
 
 		m_ServicesManager.Initialize(m_LocalLobby, m_LocalLobbyUser, m_UpdateRunner);
 
-		SceneManager.LoadScene("MainMenu");
+		AsyncOperation loadingMMAsync = SceneManager.LoadSceneAsync("MainMenu");
+
+		LoadingUIController.GetInstance().LoadTask("loading", loadingMMAsync);
 #endif //!DEDICATED_SERVER
 
 	}
@@ -106,26 +112,5 @@ public class ApplicationController : MonoBehaviour
             Application.Quit();
 #endif
 	}
-
-	//private Dictionary<string, string> GetCommandlineArgs()
-	//{
-	//	Dictionary<string, string> argDictionary = new Dictionary<string, string>();
-
-	//	var args = System.Environment.GetCommandLineArgs();
-
-	//	for (int i = 0; i < args.Length; ++i)
-	//	{
-	//		var arg = args[i].ToLower();
-	//		if (arg.StartsWith("-"))
-	//		{
-	//			var value = i < args.Length - 1 ? args[i + 1].ToLower() : null;
-	//			value = (value?.StartsWith("-") ?? false) ? null : value;
-
-	//			argDictionary.Add(arg, value);
-	//		}
-	//	}
-	//	return argDictionary;
-	//}
-
 }
 

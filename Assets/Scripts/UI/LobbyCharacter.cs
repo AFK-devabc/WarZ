@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class LobbyCharacter : MonoBehaviour
 {
 	[SerializeField] private CharacterModelContainerSO m_modelContainerSO;
-	[SerializeField] private WeaponHolderSO m_weaponContainerSO;
+	[SerializeField] private WeaponContainerSO m_weaponContainerSO;
 
 	[SerializeField] private Transform m_modelHolder;
 	[SerializeField] private TMP_InputField m_inputField;
@@ -14,7 +14,6 @@ public class LobbyCharacter : MonoBehaviour
 
 	[SerializeField] private Weapon weapon;
 	[SerializeField] private Transform weaponHolder;
-	[SerializeField] private Transform localWeaponHolder;
 
 	[SerializeField] private Image icon;
 	[SerializeField] private Sprite unreadySprite;
@@ -57,12 +56,14 @@ public class LobbyCharacter : MonoBehaviour
 	{
 		GameObject model = Instantiate(characterModel, m_modelHolder);
 		SetWeapon(model.transform);
+		model.GetComponent<Animator>().runtimeAnimatorController = this.weapon.animator;
 	}
 
 	private void SetWeapon(Transform model)
 	{
-		//if(!has)
-		weaponHolder.SetParent(RecursiveFindChild(model, "Hand_R"));
+		weaponHolder.SetParent(Utils.RecursiveFindChild(model, "Hand_R"));
+		weaponHolder.transform.localPosition = Vector3.zero;
+		weaponHolder.transform.localRotation = Quaternion.identity;
 	}
 
 	public void SetWeapon(int index)
@@ -74,25 +75,24 @@ public class LobbyCharacter : MonoBehaviour
 	public void EquipWeapon(int index)
 	{
 		this.weapon = m_weaponContainerSO.weapons[index];
+		m_modelHolder.GetComponentInChildren<Animator>().runtimeAnimatorController = this.weapon.animator;
 		OnWeaponEquip();
 	}
 
 	private void OnWeaponEquip()
 	{
-		for (var i = localWeaponHolder.childCount - 1; i >= 0; i--)
+		for (var i = weaponHolder.childCount - 1; i >= 0; i--)
 		{
 			// only destroy tagged object
-			Destroy(localWeaponHolder.GetChild(i).gameObject);
+			Destroy(weaponHolder.GetChild(i).gameObject);
 		}
 
-		GameObject newWeapon = Instantiate(weapon.weaponModel, localWeaponHolder);
+		GameObject newWeapon = Instantiate(weapon.weaponModel, weaponHolder);
 	}
 
 	private void UnSetWeapon()
 	{
 		weaponHolder.SetParent(m_modelHolder.parent);
-		weaponHolder.transform.localPosition = Vector3.zero;
-		weaponHolder.transform.localRotation = Quaternion.identity;
 	}
 
 	private void RemoveModel()
@@ -143,26 +143,6 @@ public class LobbyCharacter : MonoBehaviour
 	{
 		m_localLobbyUser.DisplayName = i_characterName;
 		Debug.Log(m_localLobbyUser.DisplayName);
-	}
-
-	private Transform RecursiveFindChild(Transform parent, string childName)
-	{
-		foreach (Transform child in parent)
-		{
-			if (child.name == childName)
-			{
-				return child;
-			}
-			else
-			{
-				Transform found = RecursiveFindChild(child, childName);
-				if (found != null)
-				{
-					return found;
-				}
-			}
-		}
-		return null;
 	}
 
 	public void OnCharacterClicked()

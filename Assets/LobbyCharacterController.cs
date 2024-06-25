@@ -63,7 +63,6 @@ public class LobbyCharacterController : MonoBehaviour
 		foreach(var i in i_localLobby.LobbyUsers)
 		{
 			m_LobbyCharactersHolder[index].Initialized(i.Value);
-			Debug.Log(i.Value.IsReady);
 			index++;
 		}
 	}
