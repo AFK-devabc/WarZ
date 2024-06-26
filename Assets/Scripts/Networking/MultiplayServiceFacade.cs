@@ -9,7 +9,7 @@ using System.Net;
 using UnityEngine.SceneManagement;
 using System;
 
-public class MultiplayServiceFacade : MonoBehaviour
+public class MultiplayServiceFacade
 {
 
 	private float autoAllocateTimer = 9999999f;
