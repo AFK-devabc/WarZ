@@ -9,9 +9,12 @@ public class ProjectileStats : ScriptableObjectWithId
     public float movSpeed;
     public LayerMask hitMask;
     public int damage;
+	public int projectilePerShoot;
+	public int ammo;
     public float lifeTime;
-    public bool shouldPlayHitEffect;
-    public float cooldownTime;
+	public float startTime;
+    public float delayTime;
+	public float reloadTime;
 }
 
 

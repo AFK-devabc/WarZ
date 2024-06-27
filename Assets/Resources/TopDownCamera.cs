@@ -64,6 +64,7 @@ public class TopDownCamera : MonoBehaviour {
 
 		this.TargetToFollow = Utils.m_localNetworkPlayer.transform;
 		Utils.m_localNetworkPlayer?.GetComponent<PlayerController>().SetCamera(this);
+		Utils.m_localNetworkPlayer?.GetComponent<PlayerAttack>().SetCamera(this);
 	}
 
 	public void CreateMinimap()

@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 422414}
   - component: {fileID: 3341588}
   - component: {fileID: 2305340}
-  - component: {fileID: -4728673001297445470}
   - component: {fileID: -494259923097567020}
+  - component: {fileID: -4728673001297445470}
   - component: {fileID: 5259487024855727520}
   m_Layer: 13
   m_Name: GenericBulletRayOnly_Red
@@ -87,19 +87,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &-4728673001297445470
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 129264}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05263f9b3bd0f4b43a6cd4a8a5b035de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  projectileStats: {fileID: 11400000, guid: 483fa3978b9ee884795773ef823738af, type: 2}
 --- !u!114 &-494259923097567020
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -120,6 +107,21 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!114 &-4728673001297445470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 129264}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05263f9b3bd0f4b43a6cd4a8a5b035de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameObject: {fileID: 129264}
+  networkObject: {fileID: -494259923097567020}
+  projectileStats: {fileID: 11400000, guid: 483fa3978b9ee884795773ef823738af, type: 2}
 --- !u!114 &5259487024855727520
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -16,7 +16,7 @@ MonoBehaviour:
   movSpeed: 20
   hitMask:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 1792
   damage: 5
   projectilePerShoot: 1
   ammo: 30

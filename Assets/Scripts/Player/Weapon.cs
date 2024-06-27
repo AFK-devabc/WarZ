@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.UI;
 
-public enum TYPE_GUN
+public enum GUNTYPE
 {
 	SHOTGUN = 1,
 	RIFLE = 2,
@@ -18,14 +18,18 @@ public enum TYPE_GUN
 public class Weapon : ScriptableObject
 {
     public string Name;
-    public TYPE_GUN type;
+    public GUNTYPE type;
 
     [Header("-----------COMPONENT----------")]
     public Sprite avatar;
-    public ProjectileController projectile;
+	public Sprite ingameAvatar;
+    public ProjectileController projectileModel;
     public GameObject weaponModel;
-    public AudioClip gunSound;
-    [Header("-----------PROPERTY------------")]
-    public int level;
+    public List <AudioClip> gunSFXs;
+	public GameObject gunVFX;
+	public AnimatorOverrideController animator;
+	[Header("-----------PROPERTY------------")]
+	public float shakeFactor;
+	public float shakeDuration;
     public List<ProjectileStats> stats;
 }

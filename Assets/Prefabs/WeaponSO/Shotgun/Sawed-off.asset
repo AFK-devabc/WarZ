@@ -18,7 +18,15 @@ MonoBehaviour:
   ingameAvatar: {fileID: 21300000, guid: 3c1820623094a734c971487b00169019, type: 3}
   projectileModel: {fileID: 8080833590343433200, guid: 5042813f66729554ba8ccb8d46474175, type: 3}
   weaponModel: {fileID: 3011731800076896709, guid: 80570266fe279ea4596a24a1a0b8322f, type: 3}
-  sound: {fileID: 0}
+  gunSFXs:
+  - {fileID: 8300000, guid: 64345d71f073f8a47b4cb438ef699eb1, type: 3}
+  - {fileID: 8300000, guid: ad49d29a83416c5489c79ca2975e050f, type: 3}
+  - {fileID: 8300000, guid: 31dd766815c5f184e8c5d75aee7ec18b, type: 3}
+  - {fileID: 8300000, guid: 115bb05addd371441a0dfb5f14c671b1, type: 3}
+  - {fileID: 8300000, guid: 1a0f2636aeebc254cae77ab6506531a1, type: 3}
+  gunVFX: {fileID: 0}
   animator: {fileID: 22100000, guid: 6ade3e126600943489057101141e3d8f, type: 2}
+  shakeFactor: 1
+  shakeDuration: 0.3
   stats:
   - {fileID: 11400000, guid: 7a233bc284187744fb2a1f3ec10f39bb, type: 2}
