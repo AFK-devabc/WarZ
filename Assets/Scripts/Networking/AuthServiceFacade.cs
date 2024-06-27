@@ -1,16 +1,13 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
-using static UnityEngine.Rendering.VolumeComponent;
 
-public class AuthServiceFacade 
+public class AuthServiceFacade
 {
 	private LocalLobbyUser m_LocalLobbyUser;
-	
+
 	public AuthServiceFacade(LocalLobbyUser i_localLobbyUser)
 	{
 		m_LocalLobbyUser = i_localLobbyUser;
@@ -45,7 +42,7 @@ public class AuthServiceFacade
 
 				m_LocalLobbyUser.ID = AuthenticationService.Instance.PlayerId;
 				Debug.Log(m_LocalLobbyUser.ID);
-				
+
 			}
 		}
 		catch (Exception e)
