@@ -1,134 +1,132 @@
+using System;
 using System.Collections;
-using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Pool;
 
 public class PlayerAttack : MonoBehaviour
 {
-    [SerializeField] private Weapon weapon;
-    [SerializeField] private Transform weaponHolder;
-    [SerializeField] private Transform target;
-    [SerializeField] private Transform shootPoint;
-    private float reloadTime = 1.5f;
-    [SerializeField] private Animator animator;
-    private ProjectileManager projectileManager;
-    private bool canExcuteAttack;
-    //[SerializeField] private AudioSource audio;
-    private bool isPaused;
+	[SerializeField] private NetworkPlayer networkPlayer;
+	[SerializeField] public Animator animator;
+	public int currentLevel = 0;
 
-    private int currentAmmo;
-    private bool isLoadingAmmo = false;
-    [SerializeField] private int totalAmmo;
-    [SerializeField] private AudioClip reloadAmmoSound;
+	[SerializeField] public Weapon weapon;
+	[SerializeField] private Transform weaponHolder;
+	public Vector3 target;
+	[SerializeField] private Transform shootPoint;
+	private IWeaponAttack currentAttackType;
+	public bool isAttacking = false;
+	private int currentAmmo;
+	private bool isLoadingAmmo = false;
 
-    void Awake()
-    {
-        //GameStateManager.Instance.OnGameStateChanged += OnGameStateChanged;
-        isPaused = false;
-    }
+	private TopDownCamera camera;
 
-    void OnDestroy()
-    {
-        //GameStateManager.Instance.OnGameStateChanged -= OnGameStateChanged;
-    }
-    private void OnGameStateChanged(GameState newGameState)
-    {
-        //enabled = newGameState == GameState.Gameplay;
-    }
-
-
-    private void Start()
-    {
-        projectileManager = ProjectileManager.GetInstance();
-		weaponHolder.SetParent(RecursiveFindChild(transform, "Hand_R"));
-        //OnWeaponEquip();
-        canExcuteAttack = true;
-        currentAmmo = totalAmmo;		
-    }
-
-	private Transform RecursiveFindChild(Transform parent, string childName)
-	{
-		foreach (Transform child in parent)
-		{
-			if (child.name == childName)
-			{
-				return child;
-			}
-			else
-			{
-				Transform found = RecursiveFindChild(child, childName);
-				if (found != null)
-				{
-					return found;
-				}
-			}
-		}
-		return null;
-	}
-
+	public Action<int, int, bool, float> OnAmmoChangeEvent;
 
 	public void OnClick(InputValue context)
-    {
-        if (context.isPressed && canExcuteAttack && enabled&& !isLoadingAmmo)
-        {
-            if (currentAmmo > 0)
-            {
-                ProjectileController bullet = projectileManager.GetProjectile(weapon.projectilePrefab);
-                //audio.clip = weapon.gunSound;
-                //audio.Play();
-                bullet.transform.position = shootPoint.position;
-                bullet.transform.forward = shootPoint.forward;
-                StartCoroutine(AttackCountdown());
-                currentAmmo--;
-            }
-            else
-            {
-                ReloadAmmo();
-            }
-        }
-    }
-    public void ReloadAmmo()
-    {
-		Debug.Log("Reloading ammo");
-        isLoadingAmmo = true;
-        StartCoroutine(ReloadAmmoCountdown());
-        isLoadingAmmo = false;
-    }
-    public void AddAmmo(int ammo)
-    {
-        totalAmmo+= ammo;
-    }
-    private IEnumerator ReloadAmmoCountdown()
-    {
-        //GetComponent<AudioSource>().clip = reloadAmmoSound;
-        //GetComponent<AudioSource>().Play();
-        yield return new WaitForSeconds(reloadTime);
-        currentAmmo = totalAmmo;
-    }
+	{
+		if (Utils.IsPointerOverUIObject() || !enabled) return;
 
-    private IEnumerator AttackCountdown()
-    {
-        canExcuteAttack = false;
-        yield return new WaitForSeconds(weapon.stats[weapon.level].cooldownTime);
-        canExcuteAttack = true;
-    }
+		if (currentAmmo <= 0)
+		{
+			ReloadAmmo();
+			return;
+		}
+		if (context.isPressed)
+		{
+			isAttacking = true;
+			currentAttackType.OnStartAttack(this);
+		}
 
-    public void EquipWeapon( Weapon weapon)
-    {
-        this.weapon = weapon;
-    }
+		if (!context.isPressed && isAttacking)
+		{
+			isAttacking = false;
+			currentAttackType.OnEndAttack(this);
+		}
 
-    private void OnWeaponEquip()
-    {
-        for (var i = weaponHolder.childCount - 1; i >= 0; i--)
-        {
-            // only destroy tagged object
-                Destroy(weaponHolder.GetChild(i).gameObject);
-        }
+	}
 
-        GameObject newWeapon = Instantiate(weapon.weaponPrefab,weaponHolder);
-    }
+	public void ReloadAmmo()
+	{
+		animator.SetTrigger("reload");
+		currentAmmo = weapon.stats[0].ammo;
+		OnAmmoChangeEvent(currentAmmo, weapon.stats[0].ammo, true, weapon.stats[0].reloadTime);
+		StartCoroutine(ReloadAmmoCountdown());
+	}
 
+	private IEnumerator ReloadAmmoCountdown()
+	{
+		isLoadingAmmo = true;
+		yield return new WaitForSeconds(weapon.stats[currentLevel].reloadTime);
+		isLoadingAmmo = false;
+	}
+
+	public void EquipWeapon(Weapon weapon)
+	{
+		this.weapon = weapon;
+		currentAttackType = SelectAttack(weapon.type);
+		currentAttackType.Init(weapon.stats[0]);
+		currentAmmo = weapon.stats[0].ammo;
+		OnWeaponEquip();
+	}
+
+	private void OnWeaponEquip()
+	{
+	}
+
+	public void SetCamera(TopDownCamera camera)
+	{
+		this.camera = camera;
+	}
+
+	public void Update()
+	{
+		if (isAttacking)
+		{
+			currentAttackType.OnHoldingAttack(this, Time.deltaTime);
+		}
+	}
+
+	private IWeaponAttack SelectAttack(GUNTYPE i_type)
+	{
+		switch (i_type)
+		{
+			case GUNTYPE.RIFLE:
+				{
+					return new HoldAttack();
+				}
+			case GUNTYPE.MACHINEGUN:
+				{
+					return new MinigunAttack();
+				}
+			case GUNTYPE.SNIPER:
+				{
+					return new ClickAttack();
+				}
+			case GUNTYPE.SHOTGUN:
+				{
+					return new ClickAttack();
+				}
+			case GUNTYPE.ROCKETLAUNCHER:
+				{
+					return new AimAttack();
+				}
+			default: return null;
+		}
+	}
+
+	public void SpawnBullet()
+	{
+		if (isLoadingAmmo)
+			return;
+
+		networkPlayer.SpawnBullet(shootPoint.position, Quaternion.LookRotation(target - shootPoint.position));
+		camera.Shake(weapon.shakeFactor, weapon.shakeDuration);
+		currentAmmo--;
+		OnAmmoChangeEvent?.Invoke(currentAmmo, weapon.stats[0].ammo, false, weapon.stats[0].reloadTime);
+		if (currentAmmo <= 0)
+		{
+			ReloadAmmo();
+		}
+	}
 
 }

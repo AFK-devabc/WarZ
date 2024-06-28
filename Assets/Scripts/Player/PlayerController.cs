@@ -1,13 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerControler : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
-	[Header("----------------INFO------------------")]
-	[SerializeField] protected float speed;
+	[SerializeField] private NetworkPlayer networkPlayer;
 
+	[Header("----------------INFO------------------")]
+	[SerializeField] protected float speed = 8.0f;
+	private static float normalSpeed = 8.0f;
+	private static float crounchingSpeed = 4.0f;
 	[Header("--------------COMPONENT---------------")]
 	[SerializeField] protected Rigidbody rb;
 	[SerializeField] public Animator ani;
@@ -17,79 +18,55 @@ public class PlayerControler : MonoBehaviour
 	public bool isAttack;
 	public bool isDead;
 
-	//[Header("---------- Movement ----------")]
-	//[SerializeField] private PlayerInput playerInput;
+	[Header("---------- Movement ----------")]
 	private Vector3 pointToLook;
-
-
-	[Header("---------- Dash ----------")]
-
-	[SerializeField] private float dashSpeed;
-	[SerializeField] private float dashTime;
-	[SerializeField] private float dashCD;
-	[SerializeField] private LayerMask hitMask;
 	[SerializeField] private Transform body;
-	private Vector2 dashVelocity, forward = Vector2.zero, right = Vector2.zero;
-	private bool isDashing = false;
-	private bool canDash = true;
-
-	private Vector2 directionWithLook = Vector2.zero;
+	private bool isLocking = false;
 
 	[SerializeField] private PlayerAttack playerAttack;
 
-	[SerializeField] private Camera mainCamera;
 	[SerializeField] private LayerMask targetMask;
 
+	[Header("---------- Dash ----------")]
+	private bool m_isCrounching = false;
 
-	void Awake()
-	{
-	}
-
-	void OnDestroy()
-	{
-	}
-	private void Start()
-	{
-	}
 	public void Update()
 	{
+		if (!isLocking)
+			LookAtMouse();
+
+		if (playerAttack.isAttacking)
+		{
+			ani.SetFloat("speed", 0);
+			return;
+		}
 		ani.SetFloat("speed", velocity.sqrMagnitude);
 		if (velocity.sqrMagnitude > 0)
 		{
-
-			directionWithLook.x = pointToLook.x - transform.position.x;
-			directionWithLook.y = pointToLook.z - transform.position.z;
 
 			Vector2 velocityRight = new Vector2(velocity.z, -velocity.x);
 
 			Vector2 velocityForward = new Vector2(velocity.x, velocity.z);
 
-			float forwardAngle = Vector3.Angle(directionWithLook, velocityForward);
-			float rightAngle = Vector3.Angle(directionWithLook, velocityRight);
+			Vector2 forward = new Vector2(body.forward.x, body.forward.z);
+
+			float forwardAngle = Vector2.Angle(forward, velocityForward);
+			float rightAngle = Vector3.Angle(forward, velocityRight);
 
 			ani.SetFloat("forwardAngle", forwardAngle);
 			ani.SetFloat("rightAngle", rightAngle);
 
 		}
-		LookAtMouse();
 	}
 	private void FixedUpdate()
 	{
-		if (isDashing)
+		if (playerAttack.isAttacking)
 		{
-			rb.velocity = new Vector3(dashVelocity.x, rb.velocity.y, dashVelocity.y);
-			RaycastHit hit;
-			if (Physics.Raycast(transform.position, rb.velocity.normalized, out hit, rb.velocity.magnitude * Time.fixedDeltaTime, hitMask)) ;
-			{
-				if (hit.collider)
-				{
-					transform.position = hit.point;
-					dashVelocity = Vector2.zero;
-				}
-			}
-
+			rb.velocity = Vector3.zero;
+			return;
 		}
-		else
+
+		if (!isLocking)
 		{
 			rb.velocity = velocity;
 		}
@@ -103,56 +80,84 @@ public class PlayerControler : MonoBehaviour
 		velocity.z = temp.y;
 	}
 
-	public void Dash(InputAction.CallbackContext context)
+	public void OnDash(InputValue context)
 	{
-		if (canDash)
-		{
-			dashVelocity = dashSpeed * (new Vector2(velocity.x, velocity.z) != Vector2.zero ? new Vector2(velocity.x, velocity.z).normalized
-				: new Vector2(transform.forward.x, transform.forward.z).normalized);
-			StartCoroutine(DashCooldown());
-		}
-	}
-	private void LookAtMouse()
-	{
-		var (success, position) = GetMousePosition();
-		if (success)
-		{
-			// Calculate the direction
-			pointToLook = position - transform.position;
-
-			// You might want to delete this line.
-			// Ignore the height difference.
-			pointToLook.y = 0;
-
-			// Make the transform look in the direction.
-			body.forward = pointToLook;
-		}
-	}
-	private IEnumerator DashCooldown()
-	{
-		canDash = false;
-		isDashing = true;
-		yield return new WaitForSeconds(dashTime);
-		isDashing = false;
-		yield return new WaitForSeconds(dashCD);
-		canDash = true;
+		//if (canDash)
+		//{
+		//	dashVelocity = dashSpeed	* new Vector2(body.forward.x, body.forward.z).normalized;
+		//	ani.SetTrigger("dash");
+		//	StartCoroutine(DashCooldown());
+		//}
 	}
 
-	private (bool success, Vector3 position) GetMousePosition()
+	public void OnCrounch(InputValue context)
 	{
-		var ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-
-		if (Physics.Raycast(ray, out var hitInfo, Mathf.Infinity, targetMask))
+		m_isCrounching = !m_isCrounching;
+		if (m_isCrounching)
 		{
-			// The Raycast hit something, return with the position.
-			return (success: true, position: hitInfo.point);
+			speed = crounchingSpeed;
+			ani.SetLayerWeight(2, 0);
+			ani.SetLayerWeight(3, 1f);
 		}
 		else
 		{
-			// The Raycast did not hit anything.
-			return (success: false, position: Vector3.zero);
+			speed = normalSpeed;
+			ani.SetLayerWeight(2, 1f);
+			ani.SetLayerWeight(3, 0);
+		}
+		if (velocity != Vector3.zero)
+			velocity = velocity.normalized * speed;
+
+	}
+
+	private void LookAtMouse()
+	{
+		var (success, hitInfo) = GetMousePosition();
+		if (success)
+		{
+			// Calculate the direction
+			pointToLook = hitInfo.point /*- body.position*/;
+			if (hitInfo.transform.tag == "Zombie")
+			{
+				playerAttack.target = hitInfo.collider.bounds.center;
+			}
+			else
+				playerAttack.target = hitInfo.point;
+			// You might want to delete this line.
+			// Ignore the height difference.
+			pointToLook.y = body.position.y;
+			// Make the transform look in the direction.
+			body.LookAt(pointToLook);
 		}
 	}
 
+	private (bool success, RaycastHit hitInfo) GetMousePosition()
+	{
+		if (m_localCamera == null)
+			return (success: false, RaycastHit: new RaycastHit());
 
+		var ray = m_localCamera.ScreenPointToRay(Input.mousePosition);
+
+		if (Physics.Raycast(ray, out var hitinfo, Mathf.Infinity, targetMask))
+		{
+			// The Raycast hit something, return with the position.
+			return (success: true, position: hitinfo);
+		}
+		// The Raycast did not hit anything.
+		return (success: false, position: hitinfo);
+	}
+
+	#region Camera
+
+	private TopDownCamera m_localCameraController;
+	private Camera m_localCamera;
+
+	public void SetCamera(TopDownCamera i_localCameraController)
+	{
+		m_localCameraController = i_localCameraController;
+		m_localCamera = m_localCameraController.m_localCamera;
+
+	}
+
+	#endregion //Camera
 }

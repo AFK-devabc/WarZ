@@ -2,7 +2,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ClientGameController :  NetworkBehaviour
+public class ClientGameController : NetworkBehaviour
 {
 	#region singleton
 	private static ClientGameController m_instance = null;
@@ -25,30 +25,41 @@ public class ClientGameController :  NetworkBehaviour
 
 	//[SerializeField] public TopDownCamera m_localCameraController;
 
-	private void Start()
-    {
-		//SceneManager.LoadSceneAsync("InGameUI", LoadSceneMode.Additive);
-	}
+	//private void Start()
+	//{
+	//	//SceneManager.LoadSceneAsync("InGameUI", LoadSceneMode.Additive);
+	//	NetworkManager.Singleton.ConnectionApprovalCallback += ConnectionApprovalCallback;
+
+	//}
 
 	public override void OnNetworkSpawn()
 	{
 		base.OnNetworkSpawn();
-		if (IsHost)
+		if (IsHost || IsServer)
 		{
-			
+
 			var status = NetworkManager.Singleton.SceneManager.LoadScene("DevView", LoadSceneMode.Single);
 			if (status != SceneEventProgressStatus.Started)
 			{
 				Debug.LogWarning($"Failed to load DevView" +
 					  $"with a {nameof(SceneEventProgressStatus)}: {status}");
-			}
+			}	
 		}
-		else if(IsClient)
+		else if (IsClient)
 		{
-
 			NetworkManager.SceneManager.OnSceneEvent += ServerSceneEventCallback;
 		}
 	}
+
+	//void ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
+	//{
+	//	/* you can use this method in your project to customize one of more aspects of the player 
+	//	 * (I.E: its start position, its character) and to perform additional validation checks. */
+	//	response.Approved = true;
+	//	response.CreatePlayerObject = true;
+	//	response.Position = GetPlayerSpawnPosition();
+	//}
+
 
 	private static void ServerSceneEventCallback(SceneEvent sceneEvent)
 	{
