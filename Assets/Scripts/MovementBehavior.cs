@@ -3,8 +3,6 @@ using UnityEngine;
 using UnityEngine.AI;
 public class MovementBehavior : MonoBehaviour
 {
-	[SerializeField] protected NavMeshAgent agent;
-
 	[SerializeField] protected MoveAction action;
 
 	[SerializeField] private Transform transform;
@@ -19,8 +17,6 @@ public class MovementBehavior : MonoBehaviour
 	{
 		if (!isStopped)
 		{
-			action.Move(agent, transform, target);
-			animator.SetFloat("Speed", agent.velocity.sqrMagnitude);
 		}
 	}
 
@@ -29,11 +25,9 @@ public class MovementBehavior : MonoBehaviour
 		isStopped = isStop;
 		if (isStop)
 		{
-			agent.enabled = false;
 		}
 		else
 		{
-			agent.enabled = true;
 		}
 	}
 
@@ -44,7 +38,6 @@ public class MovementBehavior : MonoBehaviour
 	public void DisableBehavior()
 	{
 		this.enabled = false;
-		agent.enabled = false;
 		this.GetComponent<Collider>().enabled = false;
 	}
 	public void AddModifier(StatModifier i_mod)
