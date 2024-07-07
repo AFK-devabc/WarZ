@@ -22,6 +22,8 @@ public class NetworkPlayer : NetworkBehaviour
 	[SerializeField] public BaseHealthBehavior healthBehavior;
 	[SerializeField] Transform playerTransform;
 
+	ObjectPoolingManager poolingManager;
+
 	public override void OnNetworkSpawn()
 	{
 		base.OnNetworkSpawn();
@@ -42,8 +44,10 @@ public class NetworkPlayer : NetworkBehaviour
 	}
 
 	[ClientRpc]
-	private void SetupCharacterDoneClientRpc(string modelName, string weaponName)
+	private void SetupCharacterDoneClientRpc(string modelName, string weaponName, int weaponIndex, int modelIndex)
 	{
+		m_WeaponIndex = weaponIndex;
+		m_CharacterIndex = modelIndex;
 		if (IsLocalPlayer)
 		{
 			Transform characterModel = Utils.RecursiveFindChild(playerTransform, modelName);
@@ -89,7 +93,7 @@ public class NetworkPlayer : NetworkBehaviour
 		networkObject2.SpawnWithOwnership(OwnerClientId);
 
 		if (networkObject.TrySetParent(this.gameObject) && networkObject2.TrySetParent(this.gameObject))
-			SetupCharacterDoneClientRpc(modelInstance.name, weaponInstance.name);
+			SetupCharacterDoneClientRpc(modelInstance.name, weaponInstance.name, weaponIndex, characterIndex);
 	}
 
 	#region Spawn bullet from client and server
@@ -109,8 +113,23 @@ public class NetworkPlayer : NetworkBehaviour
 		ProjectileController projectileController = networkObject.GetComponent<ProjectileController>();
 		projectileController.ResetState();
 		networkObject.Spawn();
+		SpawnBulletClientRPC(i_position, i_quaternion);
 		//audio.clip = weapon.gunSound;
 		//audio.Play();
+	}
+
+	[ClientRpc]
+	public void SpawnBulletClientRPC(Vector3 i_position, Quaternion i_quaternion)
+	{
+		if (poolingManager == null)
+			poolingManager = ObjectPoolingManager.GetInstance();
+		EffectObjectPoolController effect = (EffectObjectPoolController)poolingManager.GetObjectInPool(m_weaponContainerSO.weapons[m_WeaponIndex].gunVFX);
+		effect.transform.position = i_position;
+		effect.transform.rotation = i_quaternion;
+		int randomnumber = Random.Range(0, m_weaponContainerSO.weapons[m_WeaponIndex].gunSFXs.Count);
+
+		effect.SetAudioClip(m_weaponContainerSO.weapons[m_WeaponIndex].gunSFXs[randomnumber]);
+		effect.PlayEffect();
 	}
 
 	[ServerRpc]

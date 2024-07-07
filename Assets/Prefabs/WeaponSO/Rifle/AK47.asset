@@ -24,7 +24,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 281bc55c831bbbf4988c238dddcfa67e, type: 3}
   - {fileID: 8300000, guid: 7d84283298cdc324a8178122a73cf403, type: 3}
   - {fileID: 8300000, guid: 8d6e7061cf1eb274e90f0ae132668092, type: 3}
-  gunVFX: {fileID: 0}
+  gunVFX: {fileID: 2033750006206100209, guid: 384150f122550bc4cb80c3b0775762e9, type: 3}
   animator: {fileID: 22100000, guid: dd6a65b887c997349bfa67c0d2bf1d69, type: 2}
   shakeFactor: 0.5
   shakeDuration: 0.1

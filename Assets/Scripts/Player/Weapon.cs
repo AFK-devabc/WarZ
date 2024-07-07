@@ -26,7 +26,7 @@ public class Weapon : ScriptableObject
     public ProjectileController projectileModel;
     public GameObject weaponModel;
     public List <AudioClip> gunSFXs;
-	public GameObject gunVFX;
+	public ObjectPoolController gunVFX;
 	public AnimatorOverrideController animator;
 	[Header("-----------PROPERTY------------")]
 	public float shakeFactor;

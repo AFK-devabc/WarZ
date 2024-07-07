@@ -20,7 +20,7 @@ MonoBehaviour:
   weaponModel: {fileID: 5312718816226369078, guid: c56ba8fb191b8cd4ea8ffee104a36cc8, type: 3}
   gunSFXs:
   - {fileID: 8300000, guid: fdb16626ef6f286429d9095ea3ad68b5, type: 3}
-  gunVFX: {fileID: 0}
+  gunVFX: {fileID: 703657569565772543, guid: a1beb572840c0ac4e8df9b759c9e6ae4, type: 3}
   animator: {fileID: 22100000, guid: 32c04474f2b545447a803aae7bb7fd50, type: 2}
   shakeFactor: 3
   shakeDuration: 1

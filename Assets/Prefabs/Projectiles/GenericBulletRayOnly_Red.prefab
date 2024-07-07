@@ -122,6 +122,8 @@ MonoBehaviour:
   gameObject: {fileID: 129264}
   networkObject: {fileID: -494259923097567020}
   projectileStats: {fileID: 11400000, guid: 483fa3978b9ee884795773ef823738af, type: 2}
+  hitGroundVFX: {fileID: -5421660167340338459, guid: 4124bcd25ead6874eb9c83ebc2b1586b, type: 3}
+  hitEnemyVFX: {fileID: 0}
 --- !u!114 &5259487024855727520
 MonoBehaviour:
   m_ObjectHideFlags: 0

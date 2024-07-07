@@ -16,7 +16,7 @@ MonoBehaviour:
   type: 1
   avatar: {fileID: 21300000, guid: 07e15889013d9604791f95dbcf24feb0, type: 3}
   ingameAvatar: {fileID: 21300000, guid: ea8e2590a8fe54d4ea842d333809c9d3, type: 3}
-  projectileModel: {fileID: 1597173133818583776, guid: c265361aa258faf449f73caf467c1112, type: 3}
+  projectileModel: {fileID: 0}
   weaponModel: {fileID: 3402494769648626354, guid: e2302a0a91a8f70498a6ed9a944fe12e, type: 3}
   gunSFXs:
   - {fileID: 8300000, guid: 64345d71f073f8a47b4cb438ef699eb1, type: 3}
@@ -24,7 +24,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 31dd766815c5f184e8c5d75aee7ec18b, type: 3}
   - {fileID: 8300000, guid: 115bb05addd371441a0dfb5f14c671b1, type: 3}
   - {fileID: 8300000, guid: 1a0f2636aeebc254cae77ab6506531a1, type: 3}
-  gunVFX: {fileID: 0}
+  gunVFX: {fileID: -7920143713960813636, guid: 14ca6e2b0a551be4c8071e897143d088, type: 3}
   animator: {fileID: 22100000, guid: 6ade3e126600943489057101141e3d8f, type: 2}
   shakeFactor: 1
   shakeDuration: 0.3

@@ -11,6 +11,11 @@ public class ProjectileController : NetworkBehaviour
 
 	private TrailRenderer[] trailRenderers = null;
 
+	ObjectPoolingManager poolingManager;
+
+	public EffectObjectPoolController hitGroundVFX;
+	public EffectObjectPoolController hitEnemyVFX;
+
 	private void Awake()
 	{
 		trailRenderers = GetComponentsInChildren<TrailRenderer>();
@@ -77,9 +82,39 @@ public class ProjectileController : NetworkBehaviour
 
 	public void OnHit(RaycastHit hit)
 	{
-		if(hit.transform.tag ==  "Zombie")
+		OnHitClientRPC(hit.transform.tag, hit.point);
+		if (hit.transform.tag == "Zombie")
 		{
 			hit.transform.GetComponent<EnemyHealthBehavior>().ChangeHealth(-projectileStats.damage);
+		}
+	}
+
+	[ClientRpc]
+	public void OnHitClientRPC(string i_tag, Vector3 i_position)
+	{
+		if (poolingManager == null)
+			poolingManager = ObjectPoolingManager.GetInstance();
+
+		switch (i_tag)
+		{
+			case "ground":
+				{
+					EffectObjectPoolController effect = (EffectObjectPoolController)poolingManager.GetObjectInPool(hitGroundVFX);
+					effect.transform.position = i_position;
+					effect.PlayEffect();
+					break;
+				}
+			//case "Enemy":
+			//	{
+			//		EffectObjectPoolController effect = (EffectObjectPoolController)poolingManager.GetObjectInPool(hitEnemyVFX);
+			//		effect.transform.position = i_position;
+			//		effect.PlayEffect();
+			//		break;
+			//	}
+			default:
+				{
+					break;
+				}
 		}
 	}
 
