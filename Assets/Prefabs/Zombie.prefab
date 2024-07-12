@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2071464593226606738}
   - component: {fileID: 8526422449742633640}
+  - component: {fileID: 4272650163144918757}
   m_Layer: 8
   m_Name: ChasingMoveBehavior
   m_TagString: Untagged
@@ -44,6 +45,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77860bf4209a6c54fbdc50adc67d3f9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &4272650163144918757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2300419023489391522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d90100128a5f6549b8d9d62f25065f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isRange: 1
+  maxRange: 2
+  minRange: 0
+  isStopMove: 1
 --- !u!1 &4193342083526124599
 GameObject:
   m_ObjectHideFlags: 0
@@ -60,6 +77,7 @@ GameObject:
   - component: {fileID: 6854272805811004815}
   - component: {fileID: 5406592908152948940}
   - component: {fileID: 6804455013534252076}
+  - component: {fileID: 4131763977927728489}
   m_Layer: 8
   m_Name: Zombie
   m_TagString: Zombie
@@ -82,6 +100,7 @@ Transform:
   m_Children:
   - {fileID: 8004565565445601317}
   - {fileID: 2071464593226606738}
+  - {fileID: 8465399258774259351}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &7822019072881956480
@@ -123,6 +142,8 @@ MonoBehaviour:
   attackBehavior: {fileID: 4034740642418649435}
   healthBehavior: {fileID: 6804455013534252076}
   enemyStats: {fileID: 11400000, guid: 37652727e73086c43b159255e9397bf6, type: 2}
+  hub_Enemy: {fileID: 1258020885621768683, guid: da0bc0b9818a1b0458ae17f4ceecddfd, type: 3}
+  canvasHolder: {fileID: 8465399258774259351}
 --- !u!114 &1590091813150351808
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -130,13 +151,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4193342083526124599}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7182929b03e8e47408655a869d683ec6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   action: {fileID: 8526422449742633640}
   transform: {fileID: 5307188052759323380}
+  m_speed: 0
   animator: {fileID: 7947515217019710143}
 --- !u!114 &4034740642418649435
 MonoBehaviour:
@@ -151,7 +173,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_CurrentAttack: {fileID: 0}
-  m_Attacks: []
+  m_Attacks:
+  - {fileID: 4272650163144918757}
   transform: {fileID: 5307188052759323380}
   isAttack: 0
   isDead: 0
@@ -214,6 +237,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddc63d5f2c9a8a64985d0f450f4f5574, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyController: {fileID: 8237870683468382360}
+--- !u!114 &4131763977927728489
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4193342083526124599}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  Interpolate: 1
+  SlerpPosition: 0
 --- !u!1 &8005435197351262461
 GameObject:
   m_ObjectHideFlags: 0
@@ -2017,4 +2071,35 @@ Transform:
   - {fileID: 8001464702279105305}
   - {fileID: 8004339127274520267}
   m_Father: {fileID: 8004558436395133861}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8911062270607164933
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8465399258774259351}
+  m_Layer: 8
+  m_Name: CanvasHolder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8465399258774259351
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8911062270607164933}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5307188052759323380}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

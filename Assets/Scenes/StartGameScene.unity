@@ -2175,7 +2175,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f135857d97bb90149ab5f13f403c2b9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_NetworkManager: {fileID: 7860180450339779496}
 --- !u!114 &7860180450339779495
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2199,8 +2198,8 @@ MonoBehaviour:
   m_DisconnectTimeoutMS: 30000
   ConnectionData:
     Address: 127.0.0.1
-    Port: 0
-    ServerListenAddress: 127.0.0.1
+    Port: 7777
+    ServerListenAddress: 0.0.0.0
   DebugSimulator:
     PacketDelayMS: 0
     PacketJitterMS: 0
@@ -2226,7 +2225,7 @@ MonoBehaviour:
       - {fileID: 11400000, guid: 30f28407d340d0a4aa9a5cf0a2721c8f, type: 2}
     TickRate: 30
     ClientConnectionBufferTimeout: 10
-    ConnectionApproval: 0
+    ConnectionApproval: 1
     ConnectionData: 
     EnableTimeResync: 0
     TimeResyncInterval: 30

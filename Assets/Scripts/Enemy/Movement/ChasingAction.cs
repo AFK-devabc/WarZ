@@ -1,11 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class ChasingAction : MoveAction
 {
-	public override void Move(NavMeshAgent agent, Transform posi, Transform desPosi)
+	public override void Move(Transform posi, Transform desPosi, float speed)
 	{
+		if (posi == null) return;
+		Vector3 direction = desPosi.position - posi.position;
+		if (direction.sqrMagnitude < 1) return;
+		posi.position += direction.normalized * speed * Time.fixedDeltaTime;
+		posi.forward = direction;
 	}
 }

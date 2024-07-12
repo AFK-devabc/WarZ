@@ -47,4 +47,5 @@ public class Utils
 		return null;
 	}
 
+	public static Transform camera;
 }

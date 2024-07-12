@@ -4,6 +4,23 @@ using UnityEngine.SceneManagement;
 
 public class GameStateManager : NetworkBehaviour
 {
+	#region singleton
+	private static GameStateManager m_instance = null;
+	public static GameStateManager GetInstance() { return m_instance; }
+
+	private void Awake()
+	{
+		if (m_instance == null)
+		{
+			m_instance = this;
+		}
+		else
+		{
+			Destroy(this);
+			return;
+		}
+	}
+	#endregion
 	public static NetworkVariable<int> CurrentGameState { get; private set; } = new NetworkVariable<int>(0);
 
 	public delegate void GameStateChangeHandler(GameState newGameState);
