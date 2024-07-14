@@ -21,6 +21,7 @@ public class LobbyUIMediator : MonoBehaviour
 
 	private void Start()
 	{
+#if !DEDICATED_SERVER
 		applicationController = GameObject.Find("ApplicationController").GetComponent<ApplicationController>();
 
 		m_ServicesManager = applicationController.m_ServicesManager;
@@ -31,6 +32,7 @@ public class LobbyUIMediator : MonoBehaviour
 
 		m_JoinLobbyUI.Initialized(this);
 		m_lobbyUI.Inittialize(this);
+#endif
 	}
 
 	public async void CreateLobby()

@@ -1,40 +1,66 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Netcode.Transports.UTP;
+using System;
+using System.Threading.Tasks;
 using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
+using Unity.Services.Core;
 using Unity.Services.Multiplay;
 using UnityEngine;
-using System.Threading.Tasks;
-using System.Net;
 using UnityEngine.SceneManagement;
-using System;
 
 public class MultiplayServiceFacade
 {
 
+#if DEDICATED_SERVER
 	private float autoAllocateTimer = 9999999f;
 	private bool alreadyAutoAllocated;
 	private static IServerQueryHandler serverQueryHandler; // static so it doesn't get destroyed when this object is destroyed
+#endif
+
+	private NetworkList<PlayerData> playerDataNetworkList;
+
 
 	public async Task Initialize()
 	{
 #if DEDICATED_SERVER
-		Debug.Log("DEDICATED_SERVER");
-
-		MultiplayEventCallbacks multiplayEventCallbacks = new MultiplayEventCallbacks();
-		multiplayEventCallbacks.Allocate += MultiplayEventCallbacks_Allocate;
-		multiplayEventCallbacks.Deallocate += MultiplayEventCallbacks_Deallocate;
-		multiplayEventCallbacks.Error += MultiplayEventCallbacks_Error;
-		multiplayEventCallbacks.SubscriptionStateChanged += MultiplayEventCallbacks_SubscriptionStateChanged;
-		IServerEvents serverEvents = await MultiplayService.Instance.SubscribeToServerEventsAsync(multiplayEventCallbacks);
-
-		serverQueryHandler = await MultiplayService.Instance.StartServerQueryHandlerAsync(4, "MyServerName", "KitchenChaos", "1.0", "Default");
-
-		var serverConfig = MultiplayService.Instance.ServerConfig;
-		if (serverConfig.AllocationId != "")
+		if (UnityServices.State != ServicesInitializationState.Initialized)
 		{
-			// Already Allocated
-			MultiplayEventCallbacks_Allocate(new MultiplayAllocation("", serverConfig.ServerId, serverConfig.AllocationId));
+			InitializationOptions initializationOptions = new InitializationOptions();
+			//initializationOptions.SetProfile(UnityEngine.Random.Range(0, 10000).ToString());
+
+			await UnityServices.InitializeAsync(initializationOptions);
+			Debug.Log("DEDICATED_SERVER Initialize");
+
+
+			MultiplayEventCallbacks multiplayEventCallbacks = new MultiplayEventCallbacks();
+			multiplayEventCallbacks.Allocate += MultiplayEventCallbacks_Allocate;
+			multiplayEventCallbacks.Deallocate += MultiplayEventCallbacks_Deallocate;
+			multiplayEventCallbacks.Error += MultiplayEventCallbacks_Error;
+			multiplayEventCallbacks.SubscriptionStateChanged += MultiplayEventCallbacks_SubscriptionStateChanged;
+			IServerEvents serverEvents = await MultiplayService.Instance.SubscribeToServerEventsAsync(multiplayEventCallbacks);
+
+			Debug.Log("SubscribeToServerEventsAsync complete");
+
+			serverQueryHandler = await MultiplayService.Instance.StartServerQueryHandlerAsync(4, "TestServer", "WarZ", "1.0", "Default");
+
+			var serverConfig = MultiplayService.Instance.ServerConfig;
+			if (serverConfig.AllocationId != "")
+			{
+				// Already Allocated
+				MultiplayEventCallbacks_Allocate(new MultiplayAllocation("", serverConfig.ServerId, serverConfig.AllocationId));
+			}
+
+		}
+		else
+		{
+			// Already Initialized
+			Debug.Log("DEDICATED_SERVER LOBBY - ALREADY INIT");
+
+			var serverConfig = MultiplayService.Instance.ServerConfig;
+			if (serverConfig.AllocationId != "")
+			{
+				// Already Allocated
+				MultiplayEventCallbacks_Allocate(new MultiplayAllocation("", serverConfig.ServerId, serverConfig.AllocationId));
+			}
 		}
 #endif
 	}
@@ -53,6 +79,7 @@ public class MultiplayServiceFacade
 
 	private void MultiplayEventCallbacks_Deallocate(MultiplayDeallocation obj)
 	{
+		MultiplayService.Instance.UnreadyServerAsync();
 		Debug.Log("DEDICATED_SERVER MultiplayEventCallbacks_Deallocate");
 	}
 
@@ -79,8 +106,9 @@ public class MultiplayServiceFacade
 		ushort port = serverConfig.Port;
 		NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(ipv4Address, port, "0.0.0.0");
 
-		//KitchenGameMultiplayer.Instance.StartServer();
-		//Loader.LoadNetwork(Loader.Scene.CharacterSelectScene);
+		MultiplayService.Instance.ReadyServerForPlayersAsync();
+
+		StartServer();
 	}
 
 	public void StartClient(LocalLobby localLobby)
@@ -90,17 +118,109 @@ public class MultiplayServiceFacade
 									(ushort)(Int32.Parse(localLobby.ServerPort)), // The port number is an unsigned short
 									localLobby.ServerListenAddress // The server listen address is a string.
 									);
+		NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_Client_OnClientDisconnectCallback;
+		NetworkManager.Singleton.OnClientConnectedCallback += NetworkManager_Client_OnClientConnectedCallback;
 		NetworkManager.Singleton.StartClient();
 	}
 
-	public void StartHost()
+	private void NetworkManager_Client_OnClientDisconnectCallback(ulong clientId)
 	{
-		NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(
-							"127.0.0.1",  // The IP address is a string
-							(ushort)12345, // The port number is an unsigned short
-							"0.0.0.0" // The server listen address is a string.
-							);
-		NetworkManager.Singleton.StartHost();
-		//SceneManager.LoadScene("DevView", LoadSceneMode.Single);
+		if (!NetworkManager.Singleton.IsServer && NetworkManager.Singleton.DisconnectReason != string.Empty)
+		{
+			Debug.Log($"Approval Declined Reason: {NetworkManager.Singleton.DisconnectReason}");
+			//OnFailedToJoinGame?.Invoke(this, EventArgs.Empty);
+		}
+	}
+
+	private void NetworkManager_Client_OnClientConnectedCallback(ulong clientId)
+	{
+		//SetPlayerNameServerRpc(GetPlayerName());
+		//SetPlayerIdServerRpc(AuthenticationService.Instance.PlayerId);
+	}
+
+	public void StartServer()
+	{
+		NetworkManager.Singleton.ConnectionApprovalCallback += NetworkManager_ConnectionApprovalCallback;
+		NetworkManager.Singleton.OnClientConnectedCallback += NetworkManager_OnClientConnectedCallback;
+		NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_Server_OnClientDisconnectCallback;
+		NetworkManager.Singleton.StartServer();
+
+		Debug.Log("Server Started");
+	}
+
+	private void NetworkManager_Server_OnClientDisconnectCallback(ulong clientId)
+	{
+		Debug.Log("Client disconnected");
+
+		for (int i = 0; i < playerDataNetworkList.Count; i++)
+		{
+			PlayerData playerData = playerDataNetworkList[i];
+			if (playerData.clientId == clientId)
+			{
+				// Disconnected!
+				playerDataNetworkList.RemoveAt(i);
+			}
+		}
+
+#if DEDICATED_SERVER
+		Debug.Log("playerDataNetworkList.Count " + playerDataNetworkList.Count);
+		if (SceneManager.GetActiveScene().name != "MainMenu")
+		{
+			// Player leaving during GameScene
+			if (playerDataNetworkList.Count <= 0)
+			{
+				// All players left the game
+				Debug.Log("All players left the game");
+				Debug.Log("Shutting Down Network Manager");
+				NetworkManager.Singleton.Shutdown();
+				Application.Quit();
+				//Debug.Log("Going Back to Main Menu");
+				//Loader.Load(Loader.Scene.MainMenuScene);
+			}
+		}
+#endif
+	}
+
+	private void NetworkManager_OnClientConnectedCallback(ulong clientId)
+	{
+		Debug.Log("Client Connected " + " " + clientId);
+		playerDataNetworkList.Add(new PlayerData
+		{
+			clientId = clientId,
+		});
+	}
+
+	private void NetworkManager_ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest connectionApprovalRequest, NetworkManager.ConnectionApprovalResponse connectionApprovalResponse)
+	{
+		Debug.Log(SceneManager.GetActiveScene().name);
+		if (SceneManager.GetActiveScene().name != "MainMenu")
+		{
+			Debug.Log("Client try to connect but game already started");
+			connectionApprovalResponse.Approved = false;
+			connectionApprovalResponse.Reason = "Game has already started";
+			return;
+		}
+		connectionApprovalResponse.Approved = true;
+	}
+
+	public void Update()
+	{
+#if DEDICATED_SERVER
+		autoAllocateTimer -= Time.deltaTime;
+		if (autoAllocateTimer <= 0f)
+		{
+			autoAllocateTimer = 999f;
+			MultiplayEventCallbacks_Allocate(null);
+		}
+
+		if (serverQueryHandler != null)
+		{
+			if (NetworkManager.Singleton.IsServer)
+			{
+				serverQueryHandler.CurrentPlayers = (ushort)NetworkManager.Singleton.ConnectedClientsIds.Count;
+			}
+			serverQueryHandler.UpdateServerCheck();
+		}
+#endif
 	}
 }

@@ -1,6 +1,5 @@
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class ClientGameController : NetworkBehaviour
 {
@@ -35,17 +34,7 @@ public class ClientGameController : NetworkBehaviour
 	public override void OnNetworkSpawn()
 	{
 		base.OnNetworkSpawn();
-		if (IsHost || IsServer)
-		{
-
-			var status = NetworkManager.Singleton.SceneManager.LoadScene("DevView", LoadSceneMode.Single);
-			if (status != SceneEventProgressStatus.Started)
-			{
-				Debug.LogWarning($"Failed to load DevView" +
-					  $"with a {nameof(SceneEventProgressStatus)}: {status}");
-			}	
-		}
-		else if (IsClient)
+		if (IsClient)
 		{
 			NetworkManager.SceneManager.OnSceneEvent += ServerSceneEventCallback;
 		}
