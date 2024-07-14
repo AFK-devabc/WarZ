@@ -146,8 +146,7 @@ public class LobbyUIMediator : MonoBehaviour
 
 			m_ServicesManager.m_lobbyServiceFacade.UpdateLobbyDataAndChangeLockStatusAsync(true);
 
-
-			m_ServicesManager.m_multiplayServiceFacade.StartClient(m_LocalLobby);
+			m_ServicesManager.m_multiplayServiceFacade.StartClient(server.ipv4, (ushort)server.gamePort);
 		}
 	}
 
@@ -156,7 +155,7 @@ public class LobbyUIMediator : MonoBehaviour
 		if (localLobby.IsStarted == "true")
 		{
 			LoadingUIController.GetInstance().LoadTask("Joining game", 0.75f);
-			m_ServicesManager.m_multiplayServiceFacade.StartClient(localLobby);
+			m_ServicesManager.m_multiplayServiceFacade.StartClient(m_LocalLobby.ServerIP, ushort.Parse(m_LocalLobby.ServerPort));
 		}
 	}
 

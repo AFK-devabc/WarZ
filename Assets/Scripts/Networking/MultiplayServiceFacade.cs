@@ -112,12 +112,12 @@ public class MultiplayServiceFacade
 		StartServer();
 	}
 #endif
-	public void StartClient(LocalLobby localLobby)
+	public void StartClient(string serverIP, ushort port)
 	{
 		NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(
-									localLobby.ServerIP,  // The IP address is a string
-									(ushort)(Int32.Parse(localLobby.ServerPort)) // The port number is an unsigned short
-									, "0.0.0.0"                                          //,localLobby.ServerListenAddress // The server listen address is a string.
+									serverIP	// The IP address is a string
+									, port		// The port number is an unsigned short
+									, "0.0.0.0"	// The server listen address is a string.
 									);
 		NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_Client_OnClientDisconnectCallback;
 		NetworkManager.Singleton.OnClientConnectedCallback += NetworkManager_Client_OnClientConnectedCallback;
