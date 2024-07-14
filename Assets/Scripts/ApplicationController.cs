@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using Unity.Netcode;
-using Unity.Services.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -14,8 +13,6 @@ public class ApplicationController : MonoBehaviour
 	public UpdateRunner m_UpdateRunner { private set; get; }
 
 	[SerializeField] private NetworkManager m_NetworkManager;
-
-	ServerBrowser m_ServerBrowser;
 
 	#region singleton
 	private static ApplicationController m_instance = null;
@@ -36,17 +33,13 @@ public class ApplicationController : MonoBehaviour
 	}
 	#endregion //singleton
 
-	private async void Start()
+	private void Start()
 	{
-		await UnityServices.InitializeAsync();
+		Application.targetFrameRate = 60;
 
 #if !DEDICATED_SERVER
-
-		m_ServicesManager = new ServicesManager();
-
 		Application.wantsToQuit += OnWantToQuit;
 		DontDestroyOnLoad(gameObject);
-		Application.targetFrameRate = 60;
 
 		m_LocalLobby = new LocalLobby();
 		m_LocalLobbyUser = new LocalLobbyUser();
@@ -57,13 +50,12 @@ public class ApplicationController : MonoBehaviour
 		m_LocalLobbyUser.CharacterIndex = 1.ToString();
 		m_LocalLobbyUser.WeaponIndex = 1.ToString();
 
-		m_ServicesManager.Initialize(m_LocalLobby, m_LocalLobbyUser, m_UpdateRunner);
-
 		AsyncOperation loadingMMAsync = SceneManager.LoadSceneAsync("MainMenu");
 
 		LoadingUIController.GetInstance().LoadTask("loading", loadingMMAsync);
-#endif //!DEDICATED_SERVER
-
+#endif
+		m_ServicesManager = new ServicesManager();
+		m_ServicesManager.Initialize(m_LocalLobby, m_LocalLobbyUser, m_UpdateRunner);
 	}
 
 	private bool OnWantToQuit()
@@ -80,7 +72,6 @@ public class ApplicationController : MonoBehaviour
 			StartCoroutine(LeaveBeforeQuit());
 		}
 		return canQuit;
-
 #endif
 	}
 
