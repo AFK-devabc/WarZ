@@ -1,3 +1,6 @@
+using System;
+using System.Collections;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -9,7 +12,7 @@ public class ApplicationController : MonoBehaviour
 	public ServicesManager m_ServicesManager { private set; get; }
 	public UpdateRunner m_UpdateRunner { private set; get; }
 
-	public ServerBrowser m_ServerBrowser;
+	[SerializeField] private NetworkManager m_NetworkManager;
 
 	#region singleton
 	private static ApplicationController m_instance = null;
@@ -35,8 +38,6 @@ public class ApplicationController : MonoBehaviour
 		Application.targetFrameRate = 60;
 
 #if !DEDICATED_SERVER
-		await UnityServices.InitializeAsync();
-
 		Application.wantsToQuit += OnWantToQuit;
 		DontDestroyOnLoad(gameObject);
 

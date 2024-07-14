@@ -1,5 +1,3 @@
-using Unity.Netcode;
-using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 
 public class LobbyUIMediator : MonoBehaviour
@@ -18,6 +16,8 @@ public class LobbyUIMediator : MonoBehaviour
 
 
 	[SerializeField] private MainMenuUIController m_MainMenuUIController;
+
+	public ServerBrowser m_ServerBrowser;
 
 	private void Start()
 	{
@@ -63,11 +63,10 @@ public class LobbyUIMediator : MonoBehaviour
 		m_ServicesManager.m_lobbyServiceFacade.SetRemoteLobby(m_createLobbyResult.Lobby);
 		m_ServicesManager.m_lobbyServiceFacade.BeginTracking();
 
-	 await	m_ServicesManager.m_lobbyServiceFacade.UpdateLobbyDataAndChangeLockStatusAsync(false);
+		await m_ServicesManager.m_lobbyServiceFacade.UpdateLobbyDataAndChangeLockStatusAsync(false);
 		Debug.Log($"Created lobby with ID: {m_LocalLobby.LobbyID} and code {m_LocalLobby.LobbyCode}");
 
 		m_UnblockUIEvent.RaiseEvent();
-
 	}
 
 	public void LeaveLobby()
@@ -129,18 +128,25 @@ public class LobbyUIMediator : MonoBehaviour
 			}
 		}
 
-		LoadingUIController.GetInstance().LoadTask("Joining game", 0.75f);
+		m_ServerBrowser = new ServerBrowser();
+		m_ServerBrowser.OnSearchServerComplete += OnServerSearchedComplete;
+		m_ServerBrowser.SearchForServer();
+		//LoadingUIController.GetInstance().LoadTask("Joining game", 0.75f);
 
-		m_ServicesManager.m_multiplayServiceFacade.StartHost();
+		////m_ServicesManager.m_multiplayServiceFacade.StartClient();
 
-		m_LocalLobby.IsStarted = "true";
-		var data = NetworkManager.Singleton.GetComponent<UnityTransport>().ConnectionData;
-		m_LocalLobby.ServerIP = data.Address;
-		m_LocalLobby.ServerPort = data.Port.ToString();
-		m_LocalLobby.ServerListenAddress = data.ServerListenAddress;
+		//await m_ServicesManager.m_lobbyServiceFacade.UpdateLobbyDataAndChangeLockStatusAsync(true);
+	}
 
-
-		await m_ServicesManager.m_lobbyServiceFacade.UpdateLobbyDataAndChangeLockStatusAsync(true);
+	public void OnServerSearchedComplete(bool success, AllocatedServer server)
+	{
+		if (success)
+		{
+			m_LocalLobby.IsStarted = "true";
+			m_LocalLobby.ServerIP = server.ipv4;
+			m_LocalLobby.ServerPort = server.gamePort.ToString();
+			m_ServicesManager.m_multiplayServiceFacade.StartClient(m_LocalLobby);
+		}
 	}
 
 	public void CheckIfGameStarted(LocalLobby localLobby)
