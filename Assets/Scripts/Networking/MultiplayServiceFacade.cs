@@ -2,6 +2,8 @@ using System;
 using System.Threading.Tasks;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
+using Unity.Services.Core;
+using Unity.Services.Multiplay;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -147,7 +149,7 @@ public class MultiplayServiceFacade
 		Debug.Log("Server Started");
 	}
 
-	private void NetworkManager_Server_OnClientDisconnectCallback(ulong clientId)
+	private async void NetworkManager_Server_OnClientDisconnectCallback(ulong clientId)
 	{
 		Debug.Log("Client disconnected");
 
@@ -167,11 +169,16 @@ public class MultiplayServiceFacade
 		{
 			// All players left the game
 			Debug.Log("All players left the game");
+
 			Debug.Log("Shutting Down Network Manager");
 			NetworkManager.Singleton.Shutdown();
-			Application.Quit();
-			//Debug.Log("Going Back to Main Menu");
-			//Loader.Load(Loader.Scene.MainMenuScene);
+
+			Debug.Log("Shutting Down Multiplay Service");
+			await MultiplayService.Instance.UnreadyServerAsync();
+
+			Debug.Log("Exit Application!");
+			Application.Quit(0);
+			Environment.Exit(0);
 		}
 #endif
 	}
