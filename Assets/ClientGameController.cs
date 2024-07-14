@@ -1,5 +1,6 @@
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ClientGameController : NetworkBehaviour
 {
@@ -21,47 +22,61 @@ public class ClientGameController : NetworkBehaviour
 		}
 	}
 	#endregion //singleton
-
-	//[SerializeField] public TopDownCamera m_localCameraController;
-
-	//private void Start()
-	//{
-	//	//SceneManager.LoadSceneAsync("InGameUI", LoadSceneMode.Additive);
-	//	NetworkManager.Singleton.ConnectionApprovalCallback += ConnectionApprovalCallback;
-
-	//}
+	public NetworkList<PlayerData> playerDataNetworkList;
+	public NetworkVariable<int> numberPlayer;
+	public NetworkVariable<string> sceneName;
 
 	public override void OnNetworkSpawn()
 	{
 		base.OnNetworkSpawn();
+		playerDataNetworkList = new NetworkList<PlayerData>();
+		numberPlayer = new NetworkVariable<int>();
+
 		if (IsClient)
 		{
 			NetworkManager.SceneManager.OnSceneEvent += ServerSceneEventCallback;
+
+			if (ApplicationController.GetInstance().m_LocalLobbyUser.IsHost)
+			{
+				SetGameDataServerRpc(ApplicationController.GetInstance().m_LocalLobby.PlayerCount,
+					ApplicationController.GetInstance().m_LocalLobby.Data.sceneName);
+			}
+
+			CheckIfStartServerRpc();
+		}
+		else if (IsServer)
+		{
+			numberPlayer.Value = 4;
 		}
 	}
 
-	//void ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
-	//{
-	//	/* you can use this method in your project to customize one of more aspects of the player 
-	//	 * (I.E: its start position, its character) and to perform additional validation checks. */
-	//	response.Approved = true;
-	//	response.CreatePlayerObject = true;
-	//	response.Position = GetPlayerSpawnPosition();
-	//}
+	[ServerRpc]
+	private void CheckIfStartServerRpc()
+	{
+		CheckIfStartServer();
+	}
 
+	public void CheckIfStartServer()
+	{
+		if (playerDataNetworkList.Count == numberPlayer.Value)
+			LoadGameplayScene(sceneName.Value);
+	}
 
 	private static void ServerSceneEventCallback(SceneEvent sceneEvent)
 	{
 		Debug.Log(sceneEvent);
 	}
-	//public void OnEscButton(InputValue context)
-	//{
-	//	if (context.isPressed)
-	//	{
-	//		if (!SceneManager.GetSceneByName("InGameUI").isLoaded)
-	//			SceneManager.LoadSceneAsync("InGameUI", LoadSceneMode.Additive);
-	//		else
-	//			SceneManager.UnloadSceneAsync("InGameUI");
-	//	}
-	//}
+
+	public void LoadGameplayScene(string sceneName)
+	{
+		NetworkManager.SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
+	}
+
+	[ServerRpc]
+	public void SetGameDataServerRpc(int number, string sceneName)
+	{
+		numberPlayer.Value = number;
+		this.sceneName.Value = sceneName;
+	}
+
 }

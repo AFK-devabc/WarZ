@@ -40,15 +40,12 @@ public class GameStateManager : NetworkBehaviour
 	public override void OnNetworkSpawn()
 	{
 		base.OnNetworkSpawn();
-		if (IsClient || IsHost)
+		if (IsClient)
 		{
 			if (Utils.isClientCharacterSetupDone)
 				Initialize(Utils.m_localNetworkPlayer);
 			else
 				Utils.OnClientCharacterSetupDone += Initialize;
-		}
-		if (IsHost)
-		{
 			SceneManager.LoadSceneAsync("InGameUI", LoadSceneMode.Additive);
 		}
 	}

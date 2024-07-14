@@ -47,18 +47,19 @@ public class LobbyUIMediator : MonoBehaviour
 			m_MainMenuUIController.ShowPopupWithMessage("Error", "Please log-in first!");
 			return;
 		}
-
+		m_localLobbyUser.IsHost = true;
+		m_LocalLobby.SceneName = "DevView";
 		var m_createLobbyResult = await m_ServicesManager.m_lobbyServiceFacade.TryCreateLobbyAsync("Lobby", 4, false);
 
 		if (!m_createLobbyResult.Success)
 		{
 			m_UnblockUIEvent.RaiseEvent();
 			m_MainMenuUIController.ShowPopupWithMessage("Error", "Could not create new lobby, please try again!");
+			m_localLobbyUser.IsHost = false;
 
 			return;
 		}
 
-		m_localLobbyUser.IsHost = true;
 
 		m_ServicesManager.m_lobbyServiceFacade.SetRemoteLobby(m_createLobbyResult.Lobby);
 		m_ServicesManager.m_lobbyServiceFacade.BeginTracking();
@@ -131,11 +132,6 @@ public class LobbyUIMediator : MonoBehaviour
 		m_ServerBrowser = new ServerBrowser();
 		m_ServerBrowser.OnSearchServerComplete += OnServerSearchedComplete;
 		m_ServerBrowser.SearchForServer();
-		//LoadingUIController.GetInstance().LoadTask("Joining game", 0.75f);
-
-		////m_ServicesManager.m_multiplayServiceFacade.StartClient();
-
-		//await m_ServicesManager.m_lobbyServiceFacade.UpdateLobbyDataAndChangeLockStatusAsync(true);
 	}
 
 	public void OnServerSearchedComplete(bool success, AllocatedServer server)
@@ -145,6 +141,12 @@ public class LobbyUIMediator : MonoBehaviour
 			m_LocalLobby.IsStarted = "true";
 			m_LocalLobby.ServerIP = server.ipv4;
 			m_LocalLobby.ServerPort = server.gamePort.ToString();
+
+			LoadingUIController.GetInstance().LoadTask("Joining game", 0.75f);
+
+			m_ServicesManager.m_lobbyServiceFacade.UpdateLobbyDataAndChangeLockStatusAsync(true);
+
+
 			m_ServicesManager.m_multiplayServiceFacade.StartClient(m_LocalLobby);
 		}
 	}
@@ -153,9 +155,8 @@ public class LobbyUIMediator : MonoBehaviour
 	{
 		if (localLobby.IsStarted == "true")
 		{
-			m_ServicesManager.m_multiplayServiceFacade.StartClient(localLobby);
 			LoadingUIController.GetInstance().LoadTask("Joining game", 0.75f);
-
+			m_ServicesManager.m_multiplayServiceFacade.StartClient(localLobby);
 		}
 	}
 

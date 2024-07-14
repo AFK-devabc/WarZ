@@ -16,7 +16,6 @@ public class MultiplayServiceFacade
 	private static IServerQueryHandler serverQueryHandler; // static so it doesn't get destroyed when this object is destroyed
 #endif
 
-	private NetworkList<PlayerData> playerDataNetworkList;
 
 
 	public async Task Initialize()
@@ -116,7 +115,7 @@ public class MultiplayServiceFacade
 		NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(
 									localLobby.ServerIP,  // The IP address is a string
 									(ushort)(Int32.Parse(localLobby.ServerPort)) // The port number is an unsigned short
-									//,localLobby.ServerListenAddress // The server listen address is a string.
+																				 //,localLobby.ServerListenAddress // The server listen address is a string.
 									);
 		NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_Client_OnClientDisconnectCallback;
 		NetworkManager.Singleton.OnClientConnectedCallback += NetworkManager_Client_OnClientConnectedCallback;
@@ -152,31 +151,27 @@ public class MultiplayServiceFacade
 	{
 		Debug.Log("Client disconnected");
 
-		for (int i = 0; i < playerDataNetworkList.Count; i++)
+		for (int i = 0; i < ClientGameController.GetInstance().playerDataNetworkList.Count; i++)
 		{
-			PlayerData playerData = playerDataNetworkList[i];
+			PlayerData playerData = ClientGameController.GetInstance().playerDataNetworkList[i];
 			if (playerData.clientId == clientId)
 			{
 				// Disconnected!
-				playerDataNetworkList.RemoveAt(i);
+				ClientGameController.GetInstance().playerDataNetworkList.RemoveAt(i);
 			}
 		}
 
 #if DEDICATED_SERVER
-		Debug.Log("playerDataNetworkList.Count " + playerDataNetworkList.Count);
-		if (SceneManager.GetActiveScene().name != "MainMenu")
+		Debug.Log("playerDataNetworkList.Count " + ClientGameController.GetInstance().playerDataNetworkList.Count);
+		if (ClientGameController.GetInstance().playerDataNetworkList.Count <= 0)
 		{
-			// Player leaving during GameScene
-			if (playerDataNetworkList.Count <= 0)
-			{
-				// All players left the game
-				Debug.Log("All players left the game");
-				Debug.Log("Shutting Down Network Manager");
-				NetworkManager.Singleton.Shutdown();
-				Application.Quit();
-				//Debug.Log("Going Back to Main Menu");
-				//Loader.Load(Loader.Scene.MainMenuScene);
-			}
+			// All players left the game
+			Debug.Log("All players left the game");
+			Debug.Log("Shutting Down Network Manager");
+			NetworkManager.Singleton.Shutdown();
+			Application.Quit();
+			//Debug.Log("Going Back to Main Menu");
+			//Loader.Load(Loader.Scene.MainMenuScene);
 		}
 #endif
 	}
@@ -184,7 +179,7 @@ public class MultiplayServiceFacade
 	private void NetworkManager_OnClientConnectedCallback(ulong clientId)
 	{
 		Debug.Log("Client Connected " + " " + clientId);
-		playerDataNetworkList.Add(new PlayerData
+		ClientGameController.GetInstance().playerDataNetworkList.Add(new PlayerData
 		{
 			clientId = clientId,
 		});

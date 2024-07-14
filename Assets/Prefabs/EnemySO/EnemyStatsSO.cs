@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemyStats : ScriptableObject
 {
 	public string Name;
-
+	public int level;
 	[Header("-----------COMPONENT----------")]
 	public Material normalMaterial;
 	public Material hightlightMaterial;

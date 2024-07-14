@@ -36,6 +36,7 @@ public sealed class LocalLobby
 		public string LobbyID { get; set; }
 		public string LobbyCode { get; set; }
 		public string LobbyName { get; set; }
+		public string sceneName { get; set; }
 		public bool Private { get; set; }
 		public int MaxPlayerCount { get; set; }
 		public string IsStarted { get; set; }
@@ -48,6 +49,7 @@ public sealed class LocalLobby
 			LobbyID = existing.LobbyID;
 			LobbyCode = existing.LobbyCode;
 			LobbyName = existing.LobbyName;
+			sceneName = existing.sceneName;
 			Private = existing.Private;
 			MaxPlayerCount = existing.MaxPlayerCount;
 			IsStarted = existing.IsStarted;
@@ -61,6 +63,7 @@ public sealed class LocalLobby
 			LobbyID = null;
 			LobbyCode = lobbyCode;
 			LobbyName = null;
+			sceneName = null;
 			Private = false;
 			MaxPlayerCount = -1;
 			IsStarted = "False";
@@ -142,6 +145,16 @@ public sealed class LocalLobby
 		set
 		{
 			m_Data.LobbyName = value;
+			OnChanged();
+		}
+	}
+
+	public string SceneName
+	{
+		get => m_Data.sceneName;
+		set
+		{
+			m_Data.sceneName = value;
 			OnChanged();
 		}
 	}
@@ -250,6 +263,7 @@ public sealed class LocalLobby
 	public Dictionary<string, DataObject> GetDataForUnityServices() =>
 		new Dictionary<string, DataObject>()
 		{
+				{LobbyDataDefined.m_Map, new DataObject(DataObject.VisibilityOptions.Public,  SceneName)},
 				{LobbyDataDefined.m_IsStarted, new DataObject(DataObject.VisibilityOptions.Public,  IsStarted)},
 				{LobbyDataDefined.m_ServerIP, new DataObject(DataObject.VisibilityOptions.Public,  ServerIP)},
 				{LobbyDataDefined.m_ServerPort, new DataObject(DataObject.VisibilityOptions.Public,  ServerPort)},
@@ -267,9 +281,10 @@ public sealed class LocalLobby
 
 		if (lobby.Data != null)
 		{
+			info.sceneName = lobby.Data.ContainsKey(LobbyDataDefined.m_Map) ? lobby.Data[LobbyDataDefined.m_Map].Value : null;
 			info.ServerIP = lobby.Data.ContainsKey(LobbyDataDefined.m_ServerIP) ? lobby.Data[LobbyDataDefined.m_ServerIP].Value : null;
 			info.ServerPort = lobby.Data.ContainsKey(LobbyDataDefined.m_ServerPort) ? lobby.Data[LobbyDataDefined.m_ServerPort].Value : null;
-			info.ServerListenAddress = lobby.Data.ContainsKey(LobbyDataDefined.m_ServerListenAddress) ? lobby.Data[LobbyDataDefined.m_ServerListenAddress].Value : null; 
+			info.ServerListenAddress = lobby.Data.ContainsKey(LobbyDataDefined.m_ServerListenAddress) ? lobby.Data[LobbyDataDefined.m_ServerListenAddress].Value : null;
 			info.IsStarted = lobby.Data.ContainsKey(LobbyDataDefined.m_IsStarted) ? lobby.Data[LobbyDataDefined.m_IsStarted].Value : null;
 
 		}
@@ -317,5 +332,5 @@ static class LobbyDataDefined
 	public const string m_IsStarted = "Have started";
 	public const string m_ServerIP = "Server IP";
 	public const string m_ServerPort = "Server Port";
-	public const string m_ServerListenAddress= "Server Listen Address";
+	public const string m_ServerListenAddress = "Server Listen Address";
 }
