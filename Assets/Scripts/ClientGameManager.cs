@@ -57,7 +57,7 @@ public class GameStateManager : NetworkBehaviour
 				Debug.Log(playerdata.clientId);
 				GameObject newPlayer = Instantiate(m_playerGameobject, GetPlayerSpawnPosition(), Quaternion.identity);
 				NetworkObject networkObject = newPlayer.GetComponent<NetworkObject>();
-				networkObject.SpawnAsPlayerObject(playerdata.clientId, true);
+				networkObject.SpawnAsPlayerObject(playerdata.clientId);
 			}
 		}
 	}
