@@ -1,3 +1,4 @@
+using System.Xml.Schema;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
@@ -52,7 +53,7 @@ public class ClientGameController : NetworkBehaviour
 		}
 	}
 
-	[ServerRpc]
+	[ServerRpc(RequireOwnership = false)]
 	private void CheckIfStartServerRpc()
 	{
 		CheckIfStartServer();
@@ -60,6 +61,7 @@ public class ClientGameController : NetworkBehaviour
 
 	public void CheckIfStartServer()
 	{
+		Debug.Log("Total player :" + playerDataNetworkList.Count + "Current Joined :" + numberPlayer.Value);
 		if (playerDataNetworkList.Count == numberPlayer.Value)
 			LoadGameplayScene(sceneName.Value.ToString());
 	}
@@ -71,10 +73,11 @@ public class ClientGameController : NetworkBehaviour
 
 	public void LoadGameplayScene(string sceneName)
 	{
+		Debug.Log("Load gameplay scene, scenename :" + sceneName);
 		NetworkManager.SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
 	}
 
-	[ServerRpc]
+	[ServerRpc(RequireOwnership = false)]
 	public void SetGameDataServerRpc(int number, string sceneName)
 	{
 		numberPlayer.Value = number;

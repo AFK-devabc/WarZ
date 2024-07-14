@@ -43,6 +43,17 @@ public class NetworkPlayer : NetworkBehaviour
 		}
 	}
 
+	public override void OnNetworkDespawn()
+	{
+		base.OnNetworkDespawn();
+		if (IsLocalPlayer)
+		{
+			Utils.m_localNetworkPlayer = null;
+			Utils.isClientCharacterSetupDone = false;
+		}
+
+	}
+
 	[ClientRpc]
 	private void SetupCharacterDoneClientRpc(string modelName, string weaponName, int weaponIndex, int modelIndex)
 	{

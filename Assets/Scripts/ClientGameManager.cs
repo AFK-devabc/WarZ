@@ -28,6 +28,8 @@ public class GameStateManager : NetworkBehaviour
 
 	public TopDownCamera m_localCameraController;
 
+	[SerializeField] private GameObject m_playerGameobject;
+
 	public void Initialize(NetworkPlayer networkPlayer)
 	{
 		Instantiate(m_localCameraController);
@@ -47,6 +49,14 @@ public class GameStateManager : NetworkBehaviour
 			else
 				Utils.OnClientCharacterSetupDone += Initialize;
 			SceneManager.LoadSceneAsync("InGameUI", LoadSceneMode.Additive);
+		}
+		else if (IsServer)
+		{
+			foreach (var playerdata in ClientGameController.GetInstance().playerDataNetworkList)
+			{
+				GameObject newPlayer = Instantiate(m_playerGameobject, GetPlayerSpawnPosition(), Quaternion.identity);
+				newPlayer.GetComponent<NetworkObject>().SpawnAsPlayerObject(playerdata.clientId, true);
+			}
 		}
 	}
 

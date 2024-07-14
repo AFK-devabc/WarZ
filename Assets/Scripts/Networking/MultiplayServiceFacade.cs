@@ -190,6 +190,7 @@ public class MultiplayServiceFacade
 		{
 			clientId = clientId,
 		});
+		ClientGameController.GetInstance().CheckIfStartServer();
 	}
 
 	private void NetworkManager_ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest connectionApprovalRequest, NetworkManager.ConnectionApprovalResponse connectionApprovalResponse)
