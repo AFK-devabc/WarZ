@@ -50,12 +50,12 @@ public class ApplicationController : MonoBehaviour
 		m_LocalLobbyUser.CharacterIndex = 1.ToString();
 		m_LocalLobbyUser.WeaponIndex = 1.ToString();
 
-		LoadingUIController.GetInstance().LoadTask("loading", loadingMMAsync);
 #endif
 		m_ServicesManager = new ServicesManager();
 		m_ServicesManager.Initialize(m_LocalLobby, m_LocalLobbyUser, m_UpdateRunner);
 
 		AsyncOperation loadingMMAsync = SceneManager.LoadSceneAsync("MainMenu");
+		LoadingUIController.GetInstance().LoadTask("loading", loadingMMAsync);
 
 	}
 

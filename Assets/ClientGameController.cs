@@ -1,3 +1,4 @@
+using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -14,6 +15,9 @@ public class ClientGameController : NetworkBehaviour
 		{
 			m_instance = this;
 			DontDestroyOnLoad(gameObject);
+			playerDataNetworkList = new NetworkList<PlayerData>();
+			numberPlayer = new NetworkVariable<int>();
+			sceneName = new NetworkVariable<FixedString64Bytes>();
 		}
 		else
 		{
@@ -24,13 +28,11 @@ public class ClientGameController : NetworkBehaviour
 	#endregion //singleton
 	public NetworkList<PlayerData> playerDataNetworkList;
 	public NetworkVariable<int> numberPlayer;
-	public NetworkVariable<string> sceneName;
+	public NetworkVariable<FixedString64Bytes> sceneName;
 
 	public override void OnNetworkSpawn()
 	{
 		base.OnNetworkSpawn();
-		playerDataNetworkList = new NetworkList<PlayerData>();
-		numberPlayer = new NetworkVariable<int>();
 
 		if (IsClient)
 		{
@@ -59,7 +61,7 @@ public class ClientGameController : NetworkBehaviour
 	public void CheckIfStartServer()
 	{
 		if (playerDataNetworkList.Count == numberPlayer.Value)
-			LoadGameplayScene(sceneName.Value);
+			LoadGameplayScene(sceneName.Value.ToString());
 	}
 
 	private static void ServerSceneEventCallback(SceneEvent sceneEvent)

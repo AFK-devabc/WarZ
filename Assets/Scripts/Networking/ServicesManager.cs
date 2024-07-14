@@ -6,6 +6,8 @@ public class ServicesManager
 	public async void Initialize(LocalLobby i_locallobby, LocalLobbyUser i_localLobbyUser, UpdateRunner i_updateRunner)
 	{
 #if !DEDICATED_SERVER
+		await UnityServices.InitializeAsync();
+
 		m_lobbyServiceFacade = new LobbyServiceFacade(i_locallobby, i_localLobbyUser, i_updateRunner);
 
 		m_authServiceFacade = new AuthServiceFacade(i_localLobbyUser);
@@ -18,8 +20,10 @@ public class ServicesManager
 
 	public void Update()
 	{
+#if DEDICATED_SERVER
 		m_multiplayServiceFacade.Update();
-	}
+#endif
+		}
 
 	public LobbyServiceFacade m_lobbyServiceFacade { private set; get; }
 	public AuthServiceFacade m_authServiceFacade { private set; get; }

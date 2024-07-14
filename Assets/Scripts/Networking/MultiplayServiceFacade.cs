@@ -2,8 +2,6 @@ using System;
 using System.Threading.Tasks;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
-using Unity.Services.Core;
-using Unity.Services.Multiplay;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -64,6 +62,8 @@ public class MultiplayServiceFacade
 #endif
 	}
 
+#if DEDICATED_SERVER
+
 	private void MultiplayEventCallbacks_SubscriptionStateChanged(MultiplayServerSubscriptionState obj)
 	{
 		Debug.Log("DEDICATED_SERVER MultiplayEventCallbacks_SubscriptionStateChanged");
@@ -109,13 +109,13 @@ public class MultiplayServiceFacade
 
 		StartServer();
 	}
-
+#endif
 	public void StartClient(LocalLobby localLobby)
 	{
 		NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(
 									localLobby.ServerIP,  // The IP address is a string
 									(ushort)(Int32.Parse(localLobby.ServerPort)) // The port number is an unsigned short
-																				 //,localLobby.ServerListenAddress // The server listen address is a string.
+									, "0.0.0.0"                                          //,localLobby.ServerListenAddress // The server listen address is a string.
 									);
 		NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_Client_OnClientDisconnectCallback;
 		NetworkManager.Singleton.OnClientConnectedCallback += NetworkManager_Client_OnClientConnectedCallback;
