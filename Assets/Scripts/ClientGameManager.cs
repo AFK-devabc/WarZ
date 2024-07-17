@@ -30,12 +30,13 @@ public class GameStateManager : NetworkBehaviour
 
 	[SerializeField] private GameObject m_playerGameobject;
 
+	[SerializeField] private Transform[] spawnPoint;
+
 	public void Initialize(NetworkPlayer networkPlayer)
 	{
 		Instantiate(m_localCameraController);
 
 		CurrentGameState.OnValueChanged += OnGameStateChange;
-		Utils.m_localNetworkPlayer.transform.position = GetPlayerSpawnPosition();
 		LoadingUIController.GetInstance().HideAfterLoadComplete();
 	}
 
@@ -52,24 +53,16 @@ public class GameStateManager : NetworkBehaviour
 		}
 		else if (IsServer)
 		{
+			int i = 0;
 			foreach (var playerdata in ClientGameController.GetInstance().playerDataNetworkList)
 			{
 				Debug.Log(playerdata.clientId);
-				GameObject newPlayer = Instantiate(m_playerGameobject, GetPlayerSpawnPosition(), Quaternion.identity);
+				GameObject newPlayer = Instantiate(m_playerGameobject, spawnPoint[i].position, Quaternion.identity);
 				NetworkObject networkObject = newPlayer.GetComponent<NetworkObject>();
 				networkObject.SpawnAsPlayerObject(playerdata.clientId);
+				i++;
 			}
 		}
-	}
-
-
-	Vector3 GetPlayerSpawnPosition()
-	{
-		/*
-		 * this is just an example, and you change this implementation to make players spawn on specific spawn points
-		 * depending on other factors (I.E: player's team)
-		 */
-		return new Vector3(UnityEngine.Random.Range(-3, 3), 0, UnityEngine.Random.Range(-3, 3));
 	}
 
 
