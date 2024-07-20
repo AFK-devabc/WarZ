@@ -8,7 +8,7 @@ public class NetworkPlayer : NetworkBehaviour
 	private int m_WeaponIndex;
 	private int m_CharacterIndex;
 
-	[SerializeField] private Transform modelHolder;
+	[SerializeField] public Transform modelHolder;
 	[SerializeField] private Transform weaponHolder;
 
 	[SerializeField] private CharacterModelContainerSO m_modelContainerSO;
@@ -51,7 +51,10 @@ public class NetworkPlayer : NetworkBehaviour
 			Utils.m_localNetworkPlayer = null;
 			Utils.isClientCharacterSetupDone = false;
 		}
-
+		else
+		{
+			Utils.RemoveObject(this.transform);
+		}
 	}
 
 	[ClientRpc]
@@ -87,12 +90,16 @@ public class NetworkPlayer : NetworkBehaviour
 			Utils.isClientCharacterSetupDone = true;
 			Utils.OnClientCharacterSetupDone?.Invoke(this);
 		}
+		else
+		{
+			Utils.AddNewObject(this.transform, ObjectType.Ally);
+		}
 	}
 
 	[ServerRpc]
 	private void SetupCharacterServerRpc(int characterIndex, int weaponIndex)
 	{
-			//healthBehavior.Init(100);
+		//healthBehavior.Init(100);
 
 		Debug.Log("SetUpCharacterServer Called + " + IsLocalPlayer);
 		currentWeapon = m_weaponContainerSO.weapons[weaponIndex];

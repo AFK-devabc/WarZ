@@ -27,7 +27,7 @@ public class BaseHealthBehavior : NetworkBehaviour
 		{
 			if (m_nwCurrent.Value != 0)
 			{
-				OnHealthChanged(m_nwTotal.Value, m_nwCurrent.Value);
+				OnHealthChanged(m_nwCurrent.Value, m_nwCurrent.Value);
 			}
 			m_nwCurrent.OnValueChanged += OnHealthChanged;
 		}
@@ -61,7 +61,7 @@ public class BaseHealthBehavior : NetworkBehaviour
 	public virtual void OnHealthChanged(float i_oldValue, float i_newValue)
 	{
 		if (IsServer) Debug.LogWarning("Server receive NetworkVariables.OnHealthChanged");
-		m_OnHealthChangedEvent?.Invoke(i_newValue, m_total.m_finalValue);
+		m_OnHealthChangedEvent?.Invoke(i_newValue, m_nwTotal.Value);
 	}
 
 	private void ClientOnHealthChanged(float i_oldValue, float i_newValue)

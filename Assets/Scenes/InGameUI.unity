@@ -4609,6 +4609,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1973185932839589161}
   - component: {fileID: 4287607853870266783}
+  - component: {fileID: 4287607853870266784}
   m_Layer: 5
   m_Name: HUD_Minimap_Box_RustyCogs01
   m_TagString: Untagged
@@ -19951,6 +19952,25 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &4287607853870266784
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1186103397491048595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e400a982d24d0f4c80a9f559d6e8604, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  miniMap: {fileID: 6481848505463276936}
+  iconContainers: {fileID: 5245038367585230573}
+  testScaleRatio: 1.5
+  localPlayer: {fileID: 8595888747364395074, guid: 1baa39bf5ce9c4945b0d75eae6b6c474, type: 3}
+  ally: {fileID: 2068115745055082189, guid: f6a1124acce2ebe40b8d72c0a8b71eba, type: 3}
+  enemy: {fileID: 8459914073782331330, guid: 3e84ba0c2d3675f42b1c3c4afecdfc30, type: 3}
+  boss: {fileID: 8459914073782331330, guid: 3e84ba0c2d3675f42b1c3c4afecdfc30, type: 3}
 --- !u!1 &4291401041659168985
 GameObject:
   m_ObjectHideFlags: 0
@@ -27796,8 +27816,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 330}
-  m_SizeDelta: {x: 1173.333, y: 660}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 660, y: 1173.333}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &6495193418403327900
 MonoBehaviour:
@@ -28257,6 +28277,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponUI: {fileID: 2031525554}
   playerHealthbarUI: {fileID: 5578146320680452036}
+  minimapUI: {fileID: 4287607853870266784}
 --- !u!222 &6583890248991735494
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -34235,7 +34256,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -70, y: -70}
+  m_SizeDelta: {x: -64, y: -64}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &8169437503412759135
 RectTransform:

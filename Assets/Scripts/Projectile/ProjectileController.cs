@@ -14,6 +14,7 @@ public class ProjectileController : NetworkBehaviour
 	ObjectPoolingManager poolingManager;
 
 	public EffectObjectPoolController hitGroundVFX;
+	public EffectObjectPoolController hitMetalVFX;
 	public EffectObjectPoolController hitEnemyVFX;
 
 	private void Awake()
@@ -77,7 +78,7 @@ public class ProjectileController : NetworkBehaviour
 
 	protected void DoDamage(RaycastHit hit)
 	{
-		hit.transform.GetComponent<EnemyHealthBehavior>()?.ChangeHealth(-projectileStats.damage);
+		hit.transform.GetComponent<BaseHealthBehavior>()?.ChangeHealth(-projectileStats.damage);
 	}
 
 	public void OnHit(RaycastHit hit)
@@ -85,7 +86,7 @@ public class ProjectileController : NetworkBehaviour
 		OnHitClientRPC(hit.transform.tag, hit.point);
 		if (hit.transform.tag == "Zombie")
 		{
-			hit.transform.GetComponent<EnemyHealthBehavior>().ChangeHealth(-projectileStats.damage);
+			hit.transform.GetComponent<BaseHealthBehavior>().ChangeHealth(-projectileStats.damage);
 		}
 	}
 
@@ -104,6 +105,14 @@ public class ProjectileController : NetworkBehaviour
 					effect.PlayEffect();
 					break;
 				}
+			case "vehicles":
+				{
+					EffectObjectPoolController effect = (EffectObjectPoolController)poolingManager.GetObjectInPool(hitMetalVFX);
+					effect.transform.position = i_position;
+					effect.PlayEffect();
+					break;
+				}
+
 			//case "Enemy":
 			//	{
 			//		EffectObjectPoolController effect = (EffectObjectPoolController)poolingManager.GetObjectInPool(hitEnemyVFX);

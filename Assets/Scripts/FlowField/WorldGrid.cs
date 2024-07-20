@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public class WorldGrid : MonoBehaviour
@@ -17,6 +18,11 @@ public class WorldGrid : MonoBehaviour
 
 	private void Start()//Ran once the program starts
 	{
+		if(NetworkManager.Singleton.IsClient)
+		{
+			this.gameObject.SetActive(false);
+			return;
+		}
 		fNodeDiameter = fNodeRadius * 2;//Double the radius to get diameter
 		iGridSizeX = Mathf.RoundToInt(vGridWorldSize.x / fNodeDiameter);//Divide the grids world co-ordinates by the diameter to get the size of the graph in array units.
 		iGridSizeY = Mathf.RoundToInt(vGridWorldSize.y / fNodeDiameter);//Divide the grids world co-ordinates by the diameter to get the size of the graph in array units.

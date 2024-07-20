@@ -29,7 +29,14 @@ public class EnemyController : NetworkBehaviour
 				ClientInitizlize(-1, enemyStatsIndex.Value);
 			}
 			enemyStatsIndex.OnValueChanged += ClientInitizlize;
+			Utils.AddNewObject(this.transform, ObjectType.NormalEnemy);
 		}
+	}
+	public override void OnNetworkDespawn()
+	{
+		base.OnNetworkDespawn();
+		if (!IsServer)
+			Utils.RemoveObject(this.transform);
 	}
 
 	private void ServerInitialize()
@@ -42,8 +49,10 @@ public class EnemyController : NetworkBehaviour
 
 	private void ClientInitizlize(int oldvalue, int newvalue)
 	{
-		healthBehavior.InitilizeClientData(enemyStats.objectStats[newvalue].flashTime, enemyStats.objectStats[newvalue].flashMaterial, enemyStats.objectStats[newvalue].normalMaterial);
+		healthBehavior.InitilizeClientData(enemyStats.objectStats[newvalue].flashTime, enemyStats.objectStats[newvalue].normalMaterial, enemyStats.objectStats[newvalue].flashMaterial);
 		AddObjectUI();
+
+		skinnedMeshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
 	}
 
 	private void Dead()

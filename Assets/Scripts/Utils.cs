@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -22,6 +23,33 @@ public class Utils
 	}
 
 	public static NetworkPlayer m_localNetworkPlayer;
+
+	public static List<ObjectInGame> ObjectsInGames = new List<ObjectInGame>();
+
+	public static Action<ObjectInGame> NewObjectAddedEvent;
+	public static Action<ObjectInGame> ObjectRemovedEvent;
+
+
+	public static void AddNewObject(Transform transform, ObjectType type)
+	{
+		ObjectInGame newObject = new ObjectInGame(transform, type);
+		ObjectsInGames.Add(newObject);
+
+		NewObjectAddedEvent?.Invoke(newObject);
+	}
+
+	public static void RemoveObject(Transform transform)
+	{
+		foreach (var obj in ObjectsInGames)
+		{
+			if (obj.m_transform == transform)
+			{
+				ObjectsInGames.Remove(obj);
+				ObjectRemovedEvent.Invoke(obj);
+				return;
+			}
+		}
+	}
 
 	public static bool isClientCharacterSetupDone = false;
 
@@ -48,4 +76,25 @@ public class Utils
 	}
 
 	public static Transform camera;
+}
+
+public class ObjectInGame
+{
+	public Transform m_transform;
+	public ObjectType m_type;
+
+	public ObjectInGame(Transform transform, ObjectType type)
+	{
+		m_transform = transform;
+		m_type = type;
+	}
+}
+
+public enum ObjectType
+{
+	LocalPlayer,
+	Ally,
+	NormalEnemy,
+	Boss,
+	Objective
 }

@@ -18,11 +18,16 @@ public class InGameUIController : MonoBehaviour
 
 	[SerializeField] private HUD_WeaponUI weaponUI;
 	[SerializeField] private PlayerHealthbarController playerHealthbarUI;
+	[SerializeField] private MinimapController minimapUI;
 
 	public void Initialize(NetworkPlayer networkPlayer)
 	{
 		weaponUI.Initialize(networkPlayer.playerAttack);
 		playerHealthbarUI.Initialize(networkPlayer.healthBehavior);
+
+		minimapUI.Initialize();
+		minimapUI.OnNewObjectAdded(new ObjectInGame(networkPlayer.modelHolder.parent, ObjectType.LocalPlayer));
+		minimapUI.SetToFocus(networkPlayer.modelHolder.parent);
 	}
 
 	private void Start()
