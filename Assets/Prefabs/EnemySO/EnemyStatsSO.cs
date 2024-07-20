@@ -1,12 +1,13 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "EnemyStats", menuName = "ScriptableObject/EnemyStats", order = 1)]
+[CreateAssetMenu(fileName = "ObjectStats", menuName = "ScriptableObject/ObjectStats", order = 1)]
 
-public class EnemyStats : ScriptableObject
+public class ObjectStats : ScriptableObject
 {
 	public string Name;
 	public int level;
 	[Header("-----------COMPONENT----------")]
+	public float flashTime = 0.2f;
 	public Material normalMaterial;
 	public Material hightlightMaterial;
 	public Material flashMaterial;

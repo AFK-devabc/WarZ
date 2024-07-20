@@ -71,11 +71,11 @@ GameObject:
   m_Component:
   - component: {fileID: 5307188052759323380}
   - component: {fileID: 7822019072881956480}
+  - component: {fileID: 5405567331541941082}
   - component: {fileID: 8237870683468382360}
   - component: {fileID: 1590091813150351808}
   - component: {fileID: 4034740642418649435}
   - component: {fileID: 6854272805811004815}
-  - component: {fileID: 5405567331541941082}
   - component: {fileID: 6804455013534252076}
   - component: {fileID: 5715507658501043279}
   m_Layer: 8
@@ -126,6 +126,26 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &5405567331541941082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4193342083526124599}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 3814159800
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!114 &8237870683468382360
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -141,9 +161,11 @@ MonoBehaviour:
   movementBehavior: {fileID: 1590091813150351808}
   attackBehavior: {fileID: 4034740642418649435}
   healthBehavior: {fileID: 6804455013534252076}
-  enemyStats: {fileID: 11400000, guid: 37652727e73086c43b159255e9397bf6, type: 2}
   hub_Enemy: {fileID: 1258020885621768683, guid: da0bc0b9818a1b0458ae17f4ceecddfd, type: 3}
   canvasHolder: {fileID: 8465399258774259351}
+  enemyStatsIndex:
+    m_InternalValue: -1
+  enemyStats: {fileID: 11400000, guid: c6f04306e2d89974c915079c23118f7c, type: 2}
 --- !u!114 &1590091813150351808
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -151,7 +173,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4193342083526124599}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7182929b03e8e47408655a869d683ec6, type: 3}
   m_Name: 
@@ -205,26 +227,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!114 &5405567331541941082
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4193342083526124599}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3814159800
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
 --- !u!114 &6804455013534252076
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -237,7 +239,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddc63d5f2c9a8a64985d0f450f4f5574, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyController: {fileID: 8237870683468382360}
 --- !u!95 &5715507658501043279
 Animator:
   serializedVersion: 5

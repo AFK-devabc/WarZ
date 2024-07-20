@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-public class Hub_EnemyController : HealthbarController
+public class Hub_ObjectInfomation : HealthbarController
 {
 
 	[SerializeField] private TMP_Text nameText;

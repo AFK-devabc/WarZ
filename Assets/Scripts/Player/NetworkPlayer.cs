@@ -92,7 +92,7 @@ public class NetworkPlayer : NetworkBehaviour
 	[ServerRpc]
 	private void SetupCharacterServerRpc(int characterIndex, int weaponIndex)
 	{
-		healthBehavior.Init(100);
+			//healthBehavior.Init(100);
 
 		Debug.Log("SetUpCharacterServer Called + " + IsLocalPlayer);
 		currentWeapon = m_weaponContainerSO.weapons[weaponIndex];
