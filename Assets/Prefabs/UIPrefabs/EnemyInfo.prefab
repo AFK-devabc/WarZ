@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4812537015720313232}
   - component: {fileID: 8345134573481750168}
   - component: {fileID: 1258020885621768683}
+  - component: {fileID: 6372236686429253}
   m_Layer: 5
   m_Name: EnemyInfo
   m_TagString: Untagged
@@ -77,6 +78,18 @@ MonoBehaviour:
   healthAni: {fileID: 6941243955226843794}
   nameText: {fileID: 5759394478268233400}
   levelText: {fileID: 873067192591605410}
+--- !u!114 &6372236686429253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8124250293331134838}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 768fd0700fee03c40b16acc3a310e7bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   camera: {fileID: 0}
   transform: {fileID: 4812537015720313232}
 --- !u!1001 &1512494071890650576

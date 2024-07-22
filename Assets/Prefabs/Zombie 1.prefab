@@ -78,6 +78,8 @@ GameObject:
   - component: {fileID: 6854272805811004815}
   - component: {fileID: 6804455013534252076}
   - component: {fileID: 5715507658501043279}
+  - component: {fileID: 4777952268118189185}
+  - component: {fileID: 7818746684507354577}
   m_Layer: 8
   m_Name: Zombie 1
   m_TagString: Zombie
@@ -110,7 +112,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4193342083526124599}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: f59b270e7867614449825a1b8dbbdc80, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -222,10 +224,10 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 120
   m_CollisionDetection: 0
 --- !u!114 &6804455013534252076
 MonoBehaviour:
@@ -239,6 +241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddc63d5f2c9a8a64985d0f450f4f5574, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damageToasterPrefab: {fileID: 6088188138373418828, guid: 38f958a47feb91c4bbd17e518a460e0e, type: 3}
 --- !u!95 &5715507658501043279
 Animator:
   serializedVersion: 5
@@ -252,7 +255,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: cd5b08ab4d2b8e5448ffe89403f611bd, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_WarningMessage: 
@@ -260,6 +263,57 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4777952268118189185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4193342083526124599}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  Interpolate: 1
+  SlerpPosition: 0
+--- !u!114 &7818746684507354577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4193342083526124599}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TransitionStateInfoList:
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: 313718657
+    DestinationState: -305310762
+    TransitionDuration: 0.25
+    TriggerNameHash: 110226366
+    TransitionIndex: 1
+  m_Animator: {fileID: 5715507658501043279}
 --- !u!1 &8005435197351262461
 GameObject:
   m_ObjectHideFlags: 0

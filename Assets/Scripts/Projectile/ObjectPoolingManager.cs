@@ -6,13 +6,15 @@ public class ObjectPoolingManager : MonoBehaviour
 {
 	private static ObjectPoolingManager Instance = null;
 
-	Dictionary<string, IObjectPool<ObjectPoolController>> localObjectPool;
+	Dictionary<string, IObjectPool<ObjectPoolController>> localObjectPool = new Dictionary<string, IObjectPool<ObjectPoolController>>();
 
 	private Transform m_transform;
 
 	private void KillObjectInPool(ObjectPoolController pooledObject)
 	{
-		localObjectPool[pooledObject.id].Release(pooledObject);
+		if (localObjectPool.ContainsKey(pooledObject.id))
+
+			localObjectPool[pooledObject.id].Release(pooledObject);
 	}
 
 	public ObjectPoolController GetObjectInPool(ObjectPoolController pooledObject)
@@ -57,7 +59,6 @@ public class ObjectPoolingManager : MonoBehaviour
 	private void Start()
 	{
 		m_transform = this.transform;
-		localObjectPool = new Dictionary<string, IObjectPool<ObjectPoolController>>();
 		localObjectPool.Clear();
 		//DontDestroyOnLoad(this);
 	}

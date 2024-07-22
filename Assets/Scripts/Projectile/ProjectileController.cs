@@ -86,6 +86,7 @@ public class ProjectileController : NetworkBehaviour
 		OnHitClientRPC(hit.transform.tag, hit.point);
 		if (hit.transform.tag == "Zombie")
 		{
+			Debug.Log("Zombie Hitted");
 			hit.transform.GetComponent<BaseHealthBehavior>().ChangeHealth(-projectileStats.damage);
 		}
 	}

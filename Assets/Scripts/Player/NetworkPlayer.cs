@@ -87,6 +87,8 @@ public class NetworkPlayer : NetworkBehaviour
 			playerController.ani = modelAnimator;
 			playerAttack.animator = modelAnimator;
 
+			playerTransform.position = new Vector3(playerTransform.position.x, 0, playerTransform.position.z);
+
 			Utils.isClientCharacterSetupDone = true;
 			Utils.OnClientCharacterSetupDone?.Invoke(this);
 		}
