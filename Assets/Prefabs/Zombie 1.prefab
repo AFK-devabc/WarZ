@@ -74,8 +74,6 @@ GameObject:
   - component: {fileID: 5405567331541941082}
   - component: {fileID: 8237870683468382360}
   - component: {fileID: 1590091813150351808}
-  - component: {fileID: 4034740642418649435}
-  - component: {fileID: 6854272805811004815}
   - component: {fileID: 6804455013534252076}
   - component: {fileID: 5715507658501043279}
   - component: {fileID: 4777952268118189185}
@@ -161,13 +159,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementBehavior: {fileID: 1590091813150351808}
-  attackBehavior: {fileID: 4034740642418649435}
   healthBehavior: {fileID: 6804455013534252076}
+  collider: {fileID: 7822019072881956480}
   hub_Enemy: {fileID: 1258020885621768683, guid: da0bc0b9818a1b0458ae17f4ceecddfd, type: 3}
   canvasHolder: {fileID: 8465399258774259351}
   enemyStatsIndex:
     m_InternalValue: -1
   enemyStats: {fileID: 11400000, guid: c6f04306e2d89974c915079c23118f7c, type: 2}
+  zombieMesh: {fileID: 11400000, guid: 2cc86fcbeb35f104eb5a668a205a072f, type: 2}
 --- !u!114 &1590091813150351808
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -180,55 +179,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7182929b03e8e47408655a869d683ec6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  action: {fileID: 8526422449742633640}
-  transform: {fileID: 5307188052759323380}
-  m_speed: 0
-  animator: {fileID: 0}
---- !u!114 &4034740642418649435
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4193342083526124599}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92607ae8dc7227e46adc5bce182e5df2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_CurrentAttack: {fileID: 0}
-  m_Attacks:
-  - {fileID: 4272650163144918757}
-  transform: {fileID: 5307188052759323380}
-  isAttack: 0
-  isDead: 0
---- !u!54 &6854272805811004815
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4193342083526124599}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
+  worldGrid: {fileID: 0}
+  force: 1
+  delayCaculateTime: 0
+  animator: {fileID: 5715507658501043279}
+  attackRange: 1
+  visionRange: 3
+  playerMask:
     serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 120
-  m_CollisionDetection: 0
+    m_Bits: 128
 --- !u!114 &6804455013534252076
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -242,6 +201,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageToasterPrefab: {fileID: 6088188138373418828, guid: 38f958a47feb91c4bbd17e518a460e0e, type: 3}
+  animator: {fileID: 5715507658501043279}
+  enemyController: {fileID: 8237870683468382360}
 --- !u!95 &5715507658501043279
 Animator:
   serializedVersion: 5
@@ -281,9 +242,9 @@ MonoBehaviour:
   SyncRotAngleX: 1
   SyncRotAngleY: 1
   SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
+  SyncScaleX: 0
+  SyncScaleY: 0
+  SyncScaleZ: 0
   PositionThreshold: 0.001
   RotAngleThreshold: 0.01
   ScaleThreshold: 0.01
@@ -310,7 +271,7 @@ MonoBehaviour:
     Layer: 0
     OriginatingState: 313718657
     DestinationState: -305310762
-    TransitionDuration: 0.25
+    TransitionDuration: 0
     TriggerNameHash: 110226366
     TransitionIndex: 1
   m_Animator: {fileID: 5715507658501043279}

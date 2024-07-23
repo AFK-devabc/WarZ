@@ -15,18 +15,32 @@ public class AttackBehavior : MonoBehaviour
 
 	public void Update()
 	{
-		if (isAttack)
+		if (attackTarget != null)
 		{
-			transform.LookAt(attackTarget.position);
-			Attack();
-		}
 
-		if (isCombat == true && isAttack == false)
-		{
-			m_CurrentAttack = GetAttackBase();
-			if (m_CurrentAttack != null)
+			if (isAttack)
 			{
-				StartAttack();
+				transform.LookAt(attackTarget.position);
+				Attack();
+				return;
+			}
+
+			if (isCombat == true && isAttack == false)
+			{
+				m_CurrentAttack = GetAttackBase();
+				if (m_CurrentAttack != null)
+				{
+					StartAttack();
+					return;
+				}
+			}
+		}
+		else
+		{
+			Collider[] result = Physics.OverlapSphere(transform.position, 3.0f);
+			if (result.Length > 0)
+			{
+				SetTarget(result[0].transform);
 			}
 		}
 	}

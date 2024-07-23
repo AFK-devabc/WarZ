@@ -9,7 +9,6 @@ public class MinimapController : MonoBehaviour
 
 	private Dictionary<ObjectInGame, MinimapObject> minimapObjects;
 
-	[SerializeField] public float testScaleRatio = 1.5f;
 	public static float scaleRatio;
 
 	[SerializeField] private MinimapObject localPlayer;
@@ -47,7 +46,6 @@ public class MinimapController : MonoBehaviour
 
 	private void FixedUpdate()
 	{
-		scaleRatio = testScaleRatio;
 		if (toFocus != null)
 		{
 			miniMap.localPosition = -TranslateToMapPosition(toFocus.position);

@@ -20,7 +20,6 @@ public class EndGameController : MonoBehaviour
 		{
 			int randomSpawn = Random.Range(0, spawnPoint.Count - 1);
 		EnemyController enemy = Instantiate(zombie, spawnPoint[randomSpawn].position, Quaternion.identity);
-			enemy.movementBehavior.SetTarget(GameObject.Find("Player").transform);
 		}
 	}
 }

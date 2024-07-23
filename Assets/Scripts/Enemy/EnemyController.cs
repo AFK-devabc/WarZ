@@ -1,11 +1,12 @@
+using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
 public class EnemyController : NetworkBehaviour
 {
 	public MovementBehavior movementBehavior;
-	public AttackBehavior attackBehavior;
 	public EnemyHealthBehavior healthBehavior;
+	public Collider collider;
 
 	private SkinnedMeshRenderer skinnedMeshRenderer;
 
@@ -14,6 +15,7 @@ public class EnemyController : NetworkBehaviour
 
 	public NetworkVariable<int> enemyStatsIndex = new NetworkVariable<int>(-1);
 	[SerializeField] private ObjectStatsHolderSO enemyStats;
+	[SerializeField] private ZombieMeshContainerSO zombieMesh;
 
 	public override void OnNetworkSpawn()
 	{
@@ -41,10 +43,15 @@ public class EnemyController : NetworkBehaviour
 
 	private void ServerInitialize()
 	{
-		enemyStatsIndex.Value = 0;
+		enemyStatsIndex.Value = Random.Range(0, enemyStats.objectStats.Count); ;
 		movementBehavior.enabled = true;
-		attackBehavior.enabled = true;
+
+		float enemySpeed = Random.Range(enemyStats.objectStats[enemyStatsIndex.Value].minMovSpeed, enemyStats.objectStats[enemyStatsIndex.Value].maxMovSpeed);
+
+		movementBehavior.Initizlized(enemySpeed, enemyStats.objectStats[enemyStatsIndex.Value].damage);
 		healthBehavior.InitializeBaseData(enemyStats.objectStats[enemyStatsIndex.Value].totalHealth);
+
+		healthBehavior.m_OnZeroHealthEvent += Dead;
 	}
 
 	private void ClientInitizlize(int oldvalue, int newvalue)
@@ -53,17 +60,35 @@ public class EnemyController : NetworkBehaviour
 		AddObjectUI();
 
 		skinnedMeshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
+
+		skinnedMeshRenderer.sharedMesh = zombieMesh.zombieMesh[Random.Range(0,zombieMesh.zombieMesh.Count)];
 	}
 
 	private void Dead()
 	{
-		gameObject.SetActive(false);
+		movementBehavior.enabled = false;
+		healthBehavior.enabled = false;
+		collider.enabled = false;
+		
+		StartCoroutine(DeadCourtine());
+	}
+
+	public IEnumerator DeadCourtine()
+	{
+		yield return new WaitForSeconds(5.0f);
+		this.GetComponent<NetworkObject>().Despawn(true);
+
 	}
 
 	public void SetTarget(float i_amout, float i_tempAmount)
 	{
-		movementBehavior.SetTarget(GameObject.Find("Player(Clone)").transform);
-		attackBehavior.SetTarget(GameObject.Find("Player(Clone)").transform);
+		//attackBehavior.SetTarget(GameObject.Find("Player(Clone)").transform);
+	}
+
+	public void StartActive()
+	{
+		movementBehavior.enabled = true;
+		movementBehavior.EnableMove();
 	}
 
 	private void OnMouseEnter()

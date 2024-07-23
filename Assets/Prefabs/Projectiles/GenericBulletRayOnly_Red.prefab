@@ -123,6 +123,7 @@ MonoBehaviour:
   networkObject: {fileID: -494259923097567020}
   projectileStats: {fileID: 11400000, guid: 483fa3978b9ee884795773ef823738af, type: 2}
   hitGroundVFX: {fileID: -5421660167340338459, guid: 4124bcd25ead6874eb9c83ebc2b1586b, type: 3}
+  hitMetalVFX: {fileID: 5158659734074145733, guid: 79e5c2720bfff514abf9939e110c701d, type: 3}
   hitEnemyVFX: {fileID: 0}
 --- !u!114 &5259487024855727520
 MonoBehaviour:

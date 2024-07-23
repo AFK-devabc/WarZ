@@ -148,6 +148,12 @@ public class LobbyUIMediator : MonoBehaviour
 
 			m_ServicesManager.m_multiplayServiceFacade.StartClient(server.ipv4, (ushort)server.gamePort);
 		}
+		else
+		{
+			m_lobbyUI.OnSearchForServerFaild();
+			m_MainMenuUIController.ShowPopupWithMessage("Error", "Could not find server, please try again later!");
+
+		}
 	}
 
 	public void CheckIfGameStarted(LocalLobby localLobby)

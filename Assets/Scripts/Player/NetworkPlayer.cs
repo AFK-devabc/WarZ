@@ -20,9 +20,11 @@ public class NetworkPlayer : NetworkBehaviour
 	[SerializeField] public PlayerAttack playerAttack;
 	[SerializeField] public PlayerInput playerInput;
 	[SerializeField] public BaseHealthBehavior healthBehavior;
-	[SerializeField] Transform playerTransform;
+	[SerializeField] public Transform playerTransform;
 
 	ObjectPoolingManager poolingManager;
+	[SerializeField] private Hub_ObjectInfomation hub_Enemy;
+	[SerializeField] private Transform canvasHolder;
 
 	public override void OnNetworkSpawn()
 	{
@@ -96,12 +98,15 @@ public class NetworkPlayer : NetworkBehaviour
 		{
 			Utils.AddNewObject(this.transform, ObjectType.Ally);
 		}
+		AddObjectUI();
 	}
 
 	[ServerRpc]
 	private void SetupCharacterServerRpc(int characterIndex, int weaponIndex)
 	{
-		//healthBehavior.Init(100);
+		healthBehavior.InitializeBaseData(50);
+
+		Utils.m_otherPlayer.Add(this);
 
 		Debug.Log("SetUpCharacterServer Called + " + IsLocalPlayer);
 		currentWeapon = m_weaponContainerSO.weapons[weaponIndex];
@@ -114,6 +119,12 @@ public class NetworkPlayer : NetworkBehaviour
 
 		if (networkObject.TrySetParent(this.gameObject) && networkObject2.TrySetParent(this.gameObject))
 			SetupCharacterDoneClientRpc(modelInstance.name, weaponInstance.name, weaponIndex, characterIndex);
+	}
+
+	private void AddObjectUI()
+	{
+		Hub_ObjectInfomation hub = Instantiate(hub_Enemy, canvasHolder);
+		hub.Initialize(healthBehavior, "", 0);
 	}
 
 	#region Spawn bullet from client and server

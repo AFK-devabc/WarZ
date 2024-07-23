@@ -11708,6 +11708,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_lobbyCodeLabel: {fileID: 1622266213}
   m_readyButtonText: {fileID: 38927264}
+  m_readyButton: {fileID: 1587296184}
 --- !u!1001 &1170868451
 PrefabInstance:
   m_ObjectHideFlags: 0

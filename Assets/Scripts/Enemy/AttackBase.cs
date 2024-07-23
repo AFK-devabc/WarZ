@@ -31,7 +31,7 @@ public abstract class AttackBase : MonoBehaviour
             }
             else timeCDStart += Time.deltaTime;
         }
-
+	
         // is In range
     }
 

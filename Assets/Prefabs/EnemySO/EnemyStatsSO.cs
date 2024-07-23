@@ -14,6 +14,8 @@ public class ObjectStats : ScriptableObject
 	[Header("-----------PROPERTY------------")]
 	public float totalHealth;
 	public float damage;
-	public float movSpeed;
+	public float maxMovSpeed;
+	public float minMovSpeed;
+
 }
 

@@ -5,7 +5,6 @@ using UnityEngine;
 public class WorldGrid : MonoBehaviour
 {
 
-	public List<Transform> StartPosition;//This is where the program will start the pathfinding from.
 	public LayerMask WallMask;//This is the mask that the program will look for when trying to find obstructions to the path.
 	public Vector2 vGridWorldSize;//A vector2 to store the width and height of the graph in world units.
 	public float fNodeRadius;//This stores how big each square on the graph will be
@@ -16,9 +15,14 @@ public class WorldGrid : MonoBehaviour
 	float fNodeDiameter;//Twice the amount of the radius (Set in the start function)
 	int iGridSizeX, iGridSizeY;//Size of the Grid in Array units.
 
+	private void Awake()
+	{
+		Utils.worldGrid = this;
+	}
+
 	private void Start()//Ran once the program starts
 	{
-		if(NetworkManager.Singleton.IsClient)
+		if (NetworkManager.Singleton.IsClient)
 		{
 			this.gameObject.SetActive(false);
 			return;
@@ -28,9 +32,11 @@ public class WorldGrid : MonoBehaviour
 		iGridSizeY = Mathf.RoundToInt(vGridWorldSize.y / fNodeDiameter);//Divide the grids world co-ordinates by the diameter to get the size of the graph in array units.
 		CreateGrid();//Draw the grid
 		List<DijkstraTile> targets = new List<DijkstraTile>();
-		foreach (Transform startPosition in StartPosition)
+
+
+		foreach (NetworkPlayer startPosition in Utils.m_otherPlayer)
 		{
-			targets.Add(NodeFromWorldPoint(startPosition.position));
+			targets.Add(NodeFromWorldPoint(startPosition.playerTransform.position));
 		}
 		lastTartgetTile = targets;
 		DijkstraTile[,] dijtraGrid = DijkstraGrid.generateDijkstraGrid(this.NodeArray, new Vector2Int(iGridSizeX, iGridSizeY), targets);
@@ -74,14 +80,20 @@ public class WorldGrid : MonoBehaviour
 	private void FixedUpdate()
 	{
 		List<DijkstraTile> targets = new List<DijkstraTile>();
-		foreach (Transform startPosition in StartPosition)
+		bool shoudcaculate = false;
+		foreach (NetworkPlayer startPosition in Utils.m_otherPlayer)
 		{
-			if (!lastTartgetTile.Contains(NodeFromWorldPoint(startPosition.position)))
+			DijkstraTile tile = NodeFromWorldPoint(startPosition.playerTransform.position);
+			targets.Add(tile);
+
+			if (!lastTartgetTile.Contains(tile))
 			{
-				targets.Add(NodeFromWorldPoint(startPosition.position));
+				shoudcaculate = true;
 			}
 		}
-		if (targets.Count == 0) return;
+
+
+		if (!shoudcaculate) return;
 		lastTartgetTile = targets;
 		ResetNodeValue();
 
@@ -101,29 +113,29 @@ public class WorldGrid : MonoBehaviour
 	//Function that draws the wireframe
 	private void OnDrawGizmos()
 	{
-		Gizmos.color = Color.yellow;
-		Gizmos.DrawWireCube(transform.position, new Vector3(vGridWorldSize.x, 1, vGridWorldSize.y));//Draw a wire cube with the given dimensions from the Unity inspector
+		//Gizmos.color = Color.yellow;
+		//Gizmos.DrawWireCube(transform.position, new Vector3(vGridWorldSize.x, 1, vGridWorldSize.y));//Draw a wire cube with the given dimensions from the Unity inspector
 
-		if (NodeArray != null)//If the grid is not empty
-		{
-			foreach (DijkstraTile n in NodeArray)//Loop through every node in the grid
-			{
-				if (n.getWeight() == int.MaxValue)//If the current node is a wall node
-				{
-					Gizmos.color = Color.magenta;//Set the color of the node
-				}
-				else if (n.getWeight() == -1)
-				{
-					Gizmos.color = Color.blue;//Set the color of the node
-				}
-				else
-				{
-					Gizmos.color = Color.green;//Set the color of the node
-				}
-				Gizmos.DrawCube(n.getWorldPosition(), new Vector3(1, 0, 1) * (fNodeDiameter - fDistanceBetweenNodes));//Draw the node at the position of the node.
-				Gizmos.color = Color.red;
-				Gizmos.DrawLine(n.getWorldPosition(), n.getWorldPosition() + new Vector3(n.getFlowFieldVector().x, 0, n.getFlowFieldVector().y));
-			}
-		}
+		//if (NodeArray != null)//If the grid is not empty
+		//{
+		//	foreach (DijkstraTile n in NodeArray)//Loop through every node in the grid
+		//	{
+		//		if (n.getWeight() == int.MaxValue)//If the current node is a wall node
+		//		{
+		//			Gizmos.color = Color.magenta;//Set the color of the node
+		//		}
+		//		else if (n.getWeight() == -1)
+		//		{
+		//			Gizmos.color = Color.blue;//Set the color of the node
+		//		}
+		//		else
+		//		{
+		//			Gizmos.color = Color.green;//Set the color of the node
+		//		}
+		//		Gizmos.DrawCube(n.getWorldPosition(), new Vector3(1, 0, 1) * (fNodeDiameter - fDistanceBetweenNodes));//Draw the node at the position of the node.
+		//		Gizmos.color = Color.red;
+		//		Gizmos.DrawLine(n.getWorldPosition(), n.getWorldPosition() + new Vector3(n.getFlowFieldVector().x, 0, n.getFlowFieldVector().y));
+		//	}
+		//}
 	}
 }

@@ -13,8 +13,9 @@ public class ObjectPoolingManager : MonoBehaviour
 	private void KillObjectInPool(ObjectPoolController pooledObject)
 	{
 		if (localObjectPool.ContainsKey(pooledObject.id))
-
 			localObjectPool[pooledObject.id].Release(pooledObject);
+		else
+			Destroy(pooledObject.gameObject);
 	}
 
 	public ObjectPoolController GetObjectInPool(ObjectPoolController pooledObject)

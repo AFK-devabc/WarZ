@@ -1,52 +1,129 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Linq;
+using UnityEngine;
 public class MovementBehavior : MonoBehaviour
 {
-	[SerializeField] protected MoveAction action;
+	public WorldGrid worldGrid;
+	private Transform agentPosition;
+	public float force = 1.0f;
 
-	[SerializeField] private Transform transform;
+	private DijkstraTile lastValidTile;
+	DijkstraTile currentTile;
+	Vector3 moveDir;
 
-	private bool isStopped = true;
-	protected Transform target;
+	public static float rotateDegree = 45f, avoidanceDistance = 2.0f;
+	public static Vector3 offset = new Vector3(0, 1, 0);
 
-	public float m_speed;
+	public float delayCaculateTime;
+	public static LayerMask avoidanceLayer;
+	public static int numRay = 7;
+	Vector3 actualMoveDirection = Vector3.zero;
 
 	[SerializeField] private Animator animator;
-	private void FixedUpdate()
+
+	public float damage = 1.0f;
+	public float attackRange = 1.0f;
+	public float visionRange = 3.0f;
+	public LayerMask playerMask;
+
+
+	private bool isMoving = false;
+
+	private void Start()
 	{
-		if (!isStopped)
-		{
-			action.Move(transform, target, m_speed);
-		}
+		agentPosition = this.transform;
+		worldGrid = Utils.worldGrid;
+		delayCaculateTime = 0;
 	}
 
-	public void SetCanMove(bool isStop)
+	public void Initizlized(float movSpeed, float damage)
 	{
-		isStopped = isStop;
-		if (isStop)
+		force = movSpeed;
+		this.damage = damage;
+	}
+
+	// Update is called once per frame
+
+	public void EnableMove()
+	{
+		animator.SetFloat("speed", force);
+		Debug.Log("Enable enemy move");
+		isMoving = true;
+	}
+
+	public void DisableMove()
+	{
+		animator.SetFloat("speed", 0);
+		isMoving = false;
+	}
+
+	void FixedUpdate()
+	{
+
+		if (!isMoving)
+			return;
+
+		Collider[] result = Physics.OverlapSphere(transform.position, attackRange, playerMask);
+		if (result.Count() > 0)
 		{
+			foreach (Collider coll in result)
+			{
+				if (coll.ClosestPoint(transform.position).sqrMagnitude > attackRange * attackRange)
+				{
+					animator.SetTrigger("attack");
+					coll.GetComponent<BaseHealthBehavior>()?.ChangeHealth(-damage);
+					Debug.Log("PlayerAttacked");
+					StartCoroutine(AttackCourtine());
+					return;
+				}
+			}
+		}
+
+		//Debug.Log("Number of player : " + Utils.m_otherPlayer.Count());
+
+		currentTile = worldGrid.NodeFromWorldPoint(agentPosition.position);
+		if (this.lastValidTile == null)
+		{
+			this.lastValidTile = currentTile;
+		}
+		if (currentTile.getFlowFieldVector().Equals(Vector2Int.zero))
+		{
+			Vector2Int flowVector = this.lastValidTile.getVector2d() - currentTile.getVector2d();
+			moveDir = new Vector3(flowVector.x, 0, flowVector.y).normalized;
 		}
 		else
 		{
+			this.lastValidTile = currentTile;
+			Vector2Int flowVector = currentTile.getFlowFieldVector();
+			moveDir = new Vector3(flowVector.x, 0, flowVector.y).normalized;
 		}
+
+		actualMoveDirection = Vector3.zero;
+
+		for (int i = 0; i < numRay; i++)
+		{
+
+			Vector3 direction = Quaternion.Euler(0, -90 + 30 * i, 0) * moveDir;
+			if (!Physics.Raycast(agentPosition.position + offset, direction, avoidanceDistance, avoidanceLayer))
+			{
+				actualMoveDirection += direction;
+			}
+
+			if (actualMoveDirection != Vector3.zero)
+			{
+
+				agentPosition.forward = actualMoveDirection;
+			}
+		}
+		agentPosition.position += actualMoveDirection.normalized * force * Time.fixedDeltaTime;
 	}
 
-	public void SetTarget(Transform target)
+	public IEnumerator AttackCourtine()
 	{
-		this.target = target;
-		isStopped = false;
+		DisableMove();
+		yield return new WaitForSeconds(1.5f);
+		EnableMove();
 	}
-	public void DisableBehavior()
-	{
-		this.enabled = false;
-		this.GetComponent<Collider>().enabled = false;
-	}
-	//public void AddModifier(StatModifier i_mod)
-	//{
-	//	m_speed.AddModifier(i_mod);
-	//}
 
-	//public void RemoveModifier(StatModifier i_mod)
-	//{
-	//	m_speed.RemoveModifier(i_mod);
-	//}
+
 }

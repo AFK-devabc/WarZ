@@ -21,6 +21,7 @@ public class BaseHealthBehavior : NetworkBehaviour
 
 	[SerializeField] protected ObjectPoolController damageToasterPrefab;
 	ObjectPoolingManager poolingManager;
+	public Animator animator;
 
 	public override void OnNetworkSpawn()
 	{
@@ -59,6 +60,7 @@ public class BaseHealthBehavior : NetworkBehaviour
 		Debug.Log("Enemy Hitted" + i_amout);
 		if (m_nwCurrent.Value == 0)
 		{
+			animator.SetTrigger("dead");
 			m_OnZeroHealthEvent?.Invoke();
 		}
 	}

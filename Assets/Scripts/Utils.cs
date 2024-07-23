@@ -23,12 +23,12 @@ public class Utils
 	}
 
 	public static NetworkPlayer m_localNetworkPlayer;
-
+	public static List<NetworkPlayer> m_otherPlayer = new List<NetworkPlayer>();
 	public static List<ObjectInGame> ObjectsInGames = new List<ObjectInGame>();
 
 	public static Action<ObjectInGame> NewObjectAddedEvent;
 	public static Action<ObjectInGame> ObjectRemovedEvent;
-
+	public static WorldGrid worldGrid;
 
 	public static void AddNewObject(Transform transform, ObjectType type)
 	{

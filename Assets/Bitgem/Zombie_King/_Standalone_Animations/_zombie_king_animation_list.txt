@@ -1,0 +1,24 @@
+Zombie Boss Animation List
+
+frame: 0030-0059 backpedal (loop)
+frame: 0090-0154 bite
+frame: 0160-0259 die
+frame: 0265-0309 get hit from behind
+frame: 0315-0369 get hit from front
+frame: 0375-0419 get hit from left
+frame: 0425-0469 get hit from right
+frame: 0534-0593 idle (loop)
+frame: 0655-0704 jump
+frame: 0710-0809 pick up n eat
+frame: 0815-0894 roar
+frame: 0917-0934 run (loop)
+frame: 0974-0993 shuffle left (loop)
+frame: 1034-1053 shuffle right (loop)
+frame: 1075-1149 signal minions
+frame: 1155-1234 smash
+frame: 1240-1424 spawn
+frame: 1430-1484 stomp
+frame: 1519-1548 strafe left (loop)
+frame: 1614-1643 strafe right (loop)
+frame: 1680-1804 throw rock
+frame: 1839-1868 walk (loop)
