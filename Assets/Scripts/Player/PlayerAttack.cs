@@ -47,6 +47,7 @@ public class PlayerAttack : MonoBehaviour
 
 	public void ReloadAmmo()
 	{
+		if (isLoadingAmmo) return;
 		animator.SetTrigger("reload");
 		currentAmmo = weapon.stats[0].ammo;
 		OnAmmoChangeEvent(currentAmmo, weapon.stats[0].ammo, true, weapon.stats[0].reloadTime);

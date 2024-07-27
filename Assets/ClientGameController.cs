@@ -84,4 +84,9 @@ public class ClientGameController : NetworkBehaviour
 		this.sceneName.Value = sceneName;
 	}
 
+	public void ClientQuitGame()
+	{
+		NetworkManager.Singleton.Shutdown();
+		SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
+	}
 }

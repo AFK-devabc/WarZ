@@ -4,12 +4,12 @@ using UnityEngine;
 public class MovementBehavior : MonoBehaviour
 {
 	public WorldGrid worldGrid;
-	private Transform agentPosition;
+	public Transform agentPosition;
 	public float force = 1.0f;
 
-	private DijkstraTile lastValidTile;
-	DijkstraTile currentTile;
-	Vector3 moveDir;
+	public DijkstraTile lastValidTile;
+	public DijkstraTile currentTile;
+	public Vector3 moveDir;
 
 	public static float rotateDegree = 45f, avoidanceDistance = 2.0f;
 	public static Vector3 offset = new Vector3(0, 1, 0);
@@ -17,9 +17,9 @@ public class MovementBehavior : MonoBehaviour
 	public float delayCaculateTime;
 	public static LayerMask avoidanceLayer;
 	public static int numRay = 7;
-	Vector3 actualMoveDirection = Vector3.zero;
+	public Vector3 actualMoveDirection = Vector3.zero;
 
-	[SerializeField] private Animator animator;
+	[SerializeField] public Animator animator;
 
 	public float damage = 1.0f;
 	public float attackRange = 1.0f;
@@ -27,7 +27,7 @@ public class MovementBehavior : MonoBehaviour
 	public LayerMask playerMask;
 
 
-	private bool isMoving = false;
+	public bool isMoving = false;
 
 	private void Start()
 	{
@@ -70,9 +70,7 @@ public class MovementBehavior : MonoBehaviour
 			{
 				if (coll.ClosestPoint(transform.position).sqrMagnitude > attackRange * attackRange)
 				{
-					animator.SetTrigger("attack");
-					coll.GetComponent<BaseHealthBehavior>()?.ChangeHealth(-damage);
-					Debug.Log("PlayerAttacked");
+					agentPosition.LookAt(coll.transform.position);
 					StartCoroutine(AttackCourtine());
 					return;
 				}
@@ -118,10 +116,23 @@ public class MovementBehavior : MonoBehaviour
 		agentPosition.position += actualMoveDirection.normalized * force * Time.fixedDeltaTime;
 	}
 
-	public IEnumerator AttackCourtine()
+	public virtual IEnumerator AttackCourtine()
 	{
 		DisableMove();
+		animator.SetTrigger("attack");
+		Debug.Log("PlayerAttacked");
+
 		yield return new WaitForSeconds(1.5f);
+
+		Collider[] result = Physics.OverlapBox(agentPosition.position + agentPosition.forward * 0.5f, new Vector3(1.0f, 2f, 1.0f), agentPosition.rotation, playerMask);
+
+		foreach (Collider coll in result)
+		{
+			coll.GetComponent<BaseHealthBehavior>().ChangeHealth(-damage);
+		}
+
+		yield return new WaitForSeconds(2.0f);
+
 		EnableMove();
 	}
 

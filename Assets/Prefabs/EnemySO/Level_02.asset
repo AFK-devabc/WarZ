@@ -18,7 +18,7 @@ MonoBehaviour:
   normalMaterial: {fileID: 2100000, guid: 5545c89bb0a75004bbe217d139a97e89, type: 2}
   hightlightMaterial: {fileID: 2100000, guid: 71aec8c3a505a7840aa9ffa82d1c8b49, type: 2}
   flashMaterial: {fileID: 2100000, guid: b63179b20e6e9f1499ba32a5eea6cc33, type: 2}
-  totalHealth: 30
+  totalHealth: 25
   damage: 2
   maxMovSpeed: 1
   minMovSpeed: 0.5

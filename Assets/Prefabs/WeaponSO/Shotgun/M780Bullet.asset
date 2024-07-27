@@ -13,14 +13,15 @@ MonoBehaviour:
   m_Name: M780Bullet
   m_EditorClassIdentifier: 
   <id>k__BackingField: b851a535-d04d-476c-bbf3-3867e6e63c07
-  movSpeed: 20
+  movSpeed: 25
   hitMask:
     serializedVersion: 2
     m_Bits: 256
   damage: 15
   projectilePerShoot: 7
   ammo: 2
-  lifeTime: 3
+  lifeTime: 0.8
   startTime: 0
   delayTime: 0.5
-  reloadTime: 2
+  reloadTime: 4
+  shootAngle: 7

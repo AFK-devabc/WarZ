@@ -23,4 +23,5 @@ MonoBehaviour:
   lifeTime: 3
   startTime: 2
   delayTime: 0.1
-  reloadTime: 2
+  reloadTime: 4
+  shootAngle: 0

@@ -17,10 +17,11 @@ MonoBehaviour:
   hitMask:
     serializedVersion: 2
     m_Bits: 1792
-  damage: 5
+  damage: 10
   projectilePerShoot: 1
   ammo: 30
   lifeTime: 3
   startTime: 0
   delayTime: 0.25
-  reloadTime: 2
+  reloadTime: 4
+  shootAngle: 0

@@ -23,6 +23,8 @@ public class BaseHealthBehavior : NetworkBehaviour
 	ObjectPoolingManager poolingManager;
 	public Animator animator;
 
+	private bool isInitialized = false;
+
 	public override void OnNetworkSpawn()
 	{
 		base.OnNetworkSpawn();
@@ -44,37 +46,48 @@ public class BaseHealthBehavior : NetworkBehaviour
 		m_nwCurrent.Value = m_total.m_finalValue;
 	}
 
-	public void InitilizeClientData(float i_flashTime, Material i_normalMaterial, Material i_flashMaterial)
+	public void InitilizeClientData(float i_flashTime, Material i_normalMaterial, Material i_flashMaterial, bool useFlash = true)
 	{
 		poolingManager = ObjectPoolingManager.GetInstance();
-		m_OnHealthChangedEvent += ClientOnHealthChanged;
-		flashTime = i_flashTime;
-		normalMaterial = i_normalMaterial;
-		flashMaterial = i_flashMaterial;
+		isInitialized = true;
+		if (useFlash)
+		{
+			m_OnHealthChangedEvent += ClientOnHealthChanged;
+			flashTime = i_flashTime;
+			normalMaterial = i_normalMaterial;
+			flashMaterial = i_flashMaterial;
+		}
 	}
-
 	public virtual void ChangeHealth(float i_amout)
 	{
 		m_nwCurrent.Value = Mathf.Clamp(m_nwCurrent.Value + i_amout, 0, m_total.m_finalValue);
 
-		Debug.Log("Enemy Hitted" + i_amout);
 		if (m_nwCurrent.Value == 0)
 		{
-			animator.SetTrigger("dead");
+			animator?.SetTrigger("dead");
 			m_OnZeroHealthEvent?.Invoke();
 		}
 	}
 
 	public virtual void OnHealthChanged(float i_oldValue, float i_newValue)
 	{
-		if (IsServer) Debug.LogWarning("Server receive NetworkVariables.OnHealthChanged");
-
-		Debug.Log("OnHealthChanged");
-		Hub_DamageObjectPool damage = (Hub_DamageObjectPool)poolingManager.GetObjectInPool(damageToasterPrefab);
-		damage.transform.position = this.transform.position;
-		damage.ShowDamage((int)(i_oldValue - i_newValue));
-
-		m_OnHealthChangedEvent?.Invoke(i_newValue, m_nwTotal.Value);
+		if (isInitialized && poolingManager != null)
+		{
+			m_OnHealthChangedEvent?.Invoke(i_newValue, m_nwTotal.Value);
+			if (i_newValue == 0)
+				m_OnZeroHealthEvent?.Invoke();
+		}
+		if (poolingManager != null)
+		{
+			Debug.Log("OnHealthChanged");
+			Hub_DamageObjectPool damage = (Hub_DamageObjectPool)poolingManager.GetObjectInPool(damageToasterPrefab);
+			damage.transform.position = this.transform.position;
+			damage.ShowDamage((int)(i_oldValue - i_newValue));
+		}
+		else
+		{
+			poolingManager = ObjectPoolingManager.GetInstance();
+		}
 	}
 
 	private void ClientOnHealthChanged(float i_oldValue, float i_newValue)

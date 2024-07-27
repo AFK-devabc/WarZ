@@ -90,6 +90,11 @@ public class PlayerController : MonoBehaviour
 		//}
 	}
 
+	public void OnReload(InputValue context)
+	{
+		playerAttack.ReloadAmmo();
+	}
+
 	public void OnCrounch(InputValue context)
 	{
 		m_isCrounching = !m_isCrounching;

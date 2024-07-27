@@ -9,11 +9,11 @@ public class HealthbarController : MonoBehaviour
 	public void Initialize(BaseHealthBehavior i_healthBehavior, bool isAlly = false)
 	{
 		healthBehavior = i_healthBehavior;
-		OnHealthChanged(healthBehavior.m_nwCurrent.Value, healthBehavior.m_nwTotal.Value);
+		OnHealthChanged(1, 1);
 		healthBehavior.m_OnHealthChangedEvent += OnHealthChanged;
 		if (isAlly)
 		{
-			healthBar.color = new Color(36 / 255, 219 / 255, 63 / 255);
+			healthBar.color = new Color(0.15f, 0.9f, 0.4f,1);
 		}
 	}
 

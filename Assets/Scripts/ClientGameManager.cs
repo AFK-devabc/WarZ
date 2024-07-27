@@ -32,6 +32,10 @@ public class GameStateManager : NetworkBehaviour
 
 	[SerializeField] private Transform[] spawnPoint;
 
+	[SerializeField] private QuestStep[] questData;
+
+	int currentPlayer = 0;
+	NetworkVariable<int> currentMissionIndex = new NetworkVariable<int>(-1);
 	public void Initialize(NetworkPlayer networkPlayer)
 	{
 		Instantiate(m_localCameraController);
@@ -49,22 +53,63 @@ public class GameStateManager : NetworkBehaviour
 				Initialize(Utils.m_localNetworkPlayer);
 			else
 				Utils.OnClientCharacterSetupDone += Initialize;
-			SceneManager.LoadSceneAsync("InGameUI", LoadSceneMode.Additive);
+			var asyncOp = SceneManager.LoadSceneAsync("InGameUI", LoadSceneMode.Additive);
+
+			asyncOp.completed += OnUILoaded;
 		}
 		else if (IsServer)
 		{
-			int i = 0;
+			currentPlayer = 0;
+			currentMissionIndex.Value = 0;
 			foreach (var playerdata in ClientGameController.GetInstance().playerDataNetworkList)
 			{
 				Debug.Log(playerdata.clientId);
-				GameObject newPlayer = Instantiate(m_playerGameobject, spawnPoint[i].position, Quaternion.identity);
+				GameObject newPlayer = Instantiate(m_playerGameobject, spawnPoint[currentPlayer].position, Quaternion.identity);
 				NetworkObject networkObject = newPlayer.GetComponent<NetworkObject>();
 				networkObject.SpawnAsPlayerObject(playerdata.clientId);
-				i++;
+				currentPlayer++;
 			}
 		}
 	}
 
+	public void OnClientDead()
+	{
+		currentPlayer--;
+		if (currentPlayer <= 0)
+		{
+			GameEndedClientRPC(false);
+		}
+	}
+
+	public void GoToNextMission()
+	{
+		currentMissionIndex.Value++;
+	}
+
+	public void OnUILoaded(AsyncOperation op)
+	{
+		currentMissionIndex.OnValueChanged += ShowMissionDescription;
+		if (currentMissionIndex.Value != -1)
+		{
+			ShowMissionDescription(-1, currentMissionIndex.Value);
+		}
+	}
+
+	public void ShowMissionDescription(int oldvalue, int newvalue)
+	{
+		InGameUIController.Singleton.dialogController.StartConversation(questData[newvalue].questDescription);
+	}
+
+	public void EndGame(bool iswin)
+	{
+		GameEndedClientRPC(iswin);
+	}
+
+	[ClientRpc]
+	private void GameEndedClientRPC(bool isWin)
+	{
+		InGameUIController.Singleton.ShowEndgamePopup(isWin);
+	}
 
 	public void SetState(int newGameState)
 	{

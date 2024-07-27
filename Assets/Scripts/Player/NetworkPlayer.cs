@@ -13,7 +13,7 @@ public class NetworkPlayer : NetworkBehaviour
 
 	[SerializeField] private CharacterModelContainerSO m_modelContainerSO;
 	[SerializeField] private WeaponContainerSO m_weaponContainerSO;
-
+	Animator modelAnimator;
 	public Weapon currentWeapon;
 
 	[SerializeField] public PlayerController playerController;
@@ -25,6 +25,8 @@ public class NetworkPlayer : NetworkBehaviour
 	ObjectPoolingManager poolingManager;
 	[SerializeField] private Hub_ObjectInfomation hub_Enemy;
 	[SerializeField] private Transform canvasHolder;
+
+	private bool isdead = false;
 
 	public override void OnNetworkSpawn()
 	{
@@ -64,8 +66,12 @@ public class NetworkPlayer : NetworkBehaviour
 	{
 		m_WeaponIndex = weaponIndex;
 		m_CharacterIndex = modelIndex;
+
+
 		if (IsLocalPlayer)
 		{
+			healthBehavior.m_OnZeroHealthEvent += OnClientDead;
+
 			Transform characterModel = Utils.RecursiveFindChild(playerTransform, modelName);
 			SyncTransform modelSync = characterModel.gameObject.AddComponent<SyncTransform>();
 			modelSync.Init(characterModel, modelHolder);
@@ -83,7 +89,7 @@ public class NetworkPlayer : NetworkBehaviour
 			playerAttack.enabled = true;
 			playerInput.enabled = true;
 
-			Animator modelAnimator = playerTransform.GetComponentInChildren<Animator>();
+			modelAnimator = playerTransform.GetComponentInChildren<Animator>();
 			currentWeapon = m_weaponContainerSO.weapons[m_WeaponIndex];
 			playerAttack.EquipWeapon(currentWeapon);
 			playerController.ani = modelAnimator;
@@ -98,14 +104,18 @@ public class NetworkPlayer : NetworkBehaviour
 		{
 			Utils.AddNewObject(this.transform, ObjectType.Ally);
 		}
+
+		healthBehavior.InitilizeClientData(0f, null, null, false);
+
 		AddObjectUI();
+
 	}
 
 	[ServerRpc]
 	private void SetupCharacterServerRpc(int characterIndex, int weaponIndex)
 	{
 		healthBehavior.InitializeBaseData(50);
-
+		healthBehavior.m_OnZeroHealthEvent += OnPlayerDead;
 		Utils.m_otherPlayer.Add(this);
 
 		Debug.Log("SetUpCharacterServer Called + " + IsLocalPlayer);
@@ -124,7 +134,15 @@ public class NetworkPlayer : NetworkBehaviour
 	private void AddObjectUI()
 	{
 		Hub_ObjectInfomation hub = Instantiate(hub_Enemy, canvasHolder);
-		hub.Initialize(healthBehavior, "", 0);
+		hub.Initialize(healthBehavior, "", 0, true);
+	}
+
+	public void OnClientDead()
+	{
+		healthBehavior.enabled = false;
+		playerAttack.enabled = false;
+		playerController.enabled = false;
+		modelAnimator.SetTrigger("dead");
 	}
 
 	#region Spawn bullet from client and server
@@ -139,14 +157,30 @@ public class NetworkPlayer : NetworkBehaviour
 
 	public void SpawnBulletServer(Vector3 i_position, Quaternion i_quaternion)
 	{
-		NetworkObject networkObject = NetworkObjectPool.Singleton.GetNetworkObject(currentWeapon.projectileModel.gameObject, i_position, i_quaternion);
+		ProjectileStats stats = currentWeapon.stats[0];
 
-		ProjectileController projectileController = networkObject.GetComponent<ProjectileController>();
-		projectileController.ResetState();
-		networkObject.Spawn();
+		for (int i = 0; i < stats.projectilePerShoot; i++)
+		{
+			NetworkObject networkObject = NetworkObjectPool.Singleton.GetNetworkObject(currentWeapon.projectileModel.gameObject, i_position, i_quaternion * Quaternion.Euler(0, Random.Range(-stats.shootAngle, stats.shootAngle), 0));
+
+			ProjectileController projectileController = networkObject.GetComponent<ProjectileController>();
+			projectileController.SetProjectileStats(stats);
+			projectileController.ResetState();
+			networkObject.Spawn();
+		}
+
 		SpawnBulletClientRPC(i_position, i_quaternion);
 		//audio.clip = weapon.gunSound;
 		//audio.Play();
+	}
+
+	public void OnPlayerDead()
+	{
+		if (isdead) return;
+
+		isdead = true;
+		Utils.m_otherPlayer.Remove(this);
+		GameStateManager.GetInstance().OnClientDead();
 	}
 
 	[ClientRpc]

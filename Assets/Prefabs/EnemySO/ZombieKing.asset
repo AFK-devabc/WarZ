@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 158a5cedb863f9f4fae165a033fbc3e1, type: 3}
+  m_Name: ZombieKing
+  m_EditorClassIdentifier: 
+  Name: Zombie King
+  level: 10
+  flashTime: 0.2
+  normalMaterial: {fileID: 2100000, guid: d41d88b198029d74c97bc9c13d660e61, type: 2}
+  hightlightMaterial: {fileID: 2100000, guid: 860cc4fe30313cc4c9127b4520ad1ca2, type: 2}
+  flashMaterial: {fileID: 2100000, guid: a28ee46d512ce2f4d9d98d064afcc80f, type: 2}
+  totalHealth: 100
+  damage: 10
+  maxMovSpeed: 3
+  minMovSpeed: 3

@@ -19,6 +19,8 @@ public class InGameUIController : MonoBehaviour
 	[SerializeField] private HUD_WeaponUI weaponUI;
 	[SerializeField] private PlayerHealthbarController playerHealthbarUI;
 	[SerializeField] private MinimapController minimapUI;
+	[SerializeField] private EndgamePopup endgamePopup;
+	[SerializeField] public DialogController dialogController;
 
 	public void Initialize(NetworkPlayer networkPlayer)
 	{
@@ -36,5 +38,18 @@ public class InGameUIController : MonoBehaviour
 			Initialize(Utils.m_localNetworkPlayer);
 		else
 			Utils.OnClientCharacterSetupDone += Initialize;
+	}
+
+	public void ShowEndgamePopup(bool isWin)
+	{
+		endgamePopup.gameObject.SetActive(true);
+		if (isWin)
+		{
+			endgamePopup.ShowPopopWithMessage("Congratulation!", "You Won!");
+		}
+		else
+		{
+			endgamePopup.ShowPopopWithMessage("Mission failed!", "You Lose!");
+		}
 	}
 }

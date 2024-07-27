@@ -22,6 +22,11 @@ public class ProjectileController : NetworkBehaviour
 		trailRenderers = GetComponentsInChildren<TrailRenderer>();
 	}
 
+	public void SetProjectileStats(ProjectileStats i_stats)
+	{
+		projectileStats = i_stats;
+	}
+
 	public void ResetState()
 	{
 		lifeTime = projectileStats.lifeTime;

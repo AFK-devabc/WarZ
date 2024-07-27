@@ -13,14 +13,15 @@ MonoBehaviour:
   m_Name: Sawed-offBullet 1
   m_EditorClassIdentifier: 
   <id>k__BackingField: 8dad9223-9c57-4dea-b345-a4b70b96197a
-  movSpeed: 20
+  movSpeed: 25
   hitMask:
     serializedVersion: 2
     m_Bits: 256
-  damage: 10
+  damage: 12
   projectilePerShoot: 5
   ammo: 7
-  lifeTime: 3
+  lifeTime: 1
   startTime: 0
   delayTime: 0.5
-  reloadTime: 2
+  reloadTime: 4
+  shootAngle: 5

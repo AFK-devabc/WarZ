@@ -50,6 +50,13 @@ public class MainMenuUIController : MonoBehaviour
 		Utils.OnLeaveCustomCharacterEvent -= ShowMainMenuUI;
 	}
 
+	private void OnDestroy()
+	{
+		m_BlockUIEvent.OnEventRaised -= BlockUIAndShowLoadingInProgress;
+		m_UnblockUIEvent.OnEventRaised -= UnblockUIAndHideLoadingInProgress;
+
+	}
+
 	public void ShowMainMenuUI()
 	{
 		m_MenuUI.SetActive(true);

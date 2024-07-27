@@ -8,9 +8,9 @@ public class Hub_ObjectInfomation : HealthbarController
 	[SerializeField] private TMP_Text levelText;
 
 
-	public void Initialize(BaseHealthBehavior healthBehavior, string name, int level)
+	public void Initialize(BaseHealthBehavior healthBehavior, string name, int level, bool isAlly = false)
 	{
-		base.Initialize(healthBehavior);
+		base.Initialize(healthBehavior, isAlly);
 		nameText.text = name;
 		levelText.text = level.ToString();
 

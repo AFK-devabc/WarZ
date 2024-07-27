@@ -15,6 +15,7 @@ public class ProjectileStats : ScriptableObjectWithId
 	public float startTime;
 	public float delayTime;
 	public float reloadTime;
+	public float shootAngle;
 }
 
 

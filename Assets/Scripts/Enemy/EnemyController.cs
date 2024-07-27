@@ -16,6 +16,8 @@ public class EnemyController : NetworkBehaviour
 	public NetworkVariable<int> enemyStatsIndex = new NetworkVariable<int>(-1);
 	[SerializeField] private ObjectStatsHolderSO enemyStats;
 	[SerializeField] private ZombieMeshContainerSO zombieMesh;
+	[SerializeField] Animator animator;
+	private bool isactivated = false;
 
 	public override void OnNetworkSpawn()
 	{
@@ -61,7 +63,7 @@ public class EnemyController : NetworkBehaviour
 
 		skinnedMeshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
 
-		skinnedMeshRenderer.sharedMesh = zombieMesh.zombieMesh[Random.Range(0,zombieMesh.zombieMesh.Count)];
+		skinnedMeshRenderer.sharedMesh = zombieMesh.zombieMesh[Random.Range(0, zombieMesh.zombieMesh.Count)];
 	}
 
 	private void Dead()
@@ -69,7 +71,7 @@ public class EnemyController : NetworkBehaviour
 		movementBehavior.enabled = false;
 		healthBehavior.enabled = false;
 		collider.enabled = false;
-		
+
 		StartCoroutine(DeadCourtine());
 	}
 
@@ -85,10 +87,36 @@ public class EnemyController : NetworkBehaviour
 		//attackBehavior.SetTarget(GameObject.Find("Player(Clone)").transform);
 	}
 
-	public void StartActive()
+	public void StartActive(bool useRoar = false)
 	{
+		if (isactivated)
+			return;
+		isactivated = true;
+		if (useRoar)
+		{
+			StartCoroutine(ActiveCoroutine());
+		}
+		else
+		{
+			movementBehavior.enabled = true;
+			movementBehavior.EnableMove();
+		}
+	}
+	public IEnumerator ActiveCoroutine()
+	{
+		animator.SetTrigger("roar");
+		yield return new WaitForSeconds(1.5f);
+
+		Collider[] result = Physics.OverlapSphere(this.transform.position, 4.0f);
+
+		foreach (Collider i in result)
+		{
+			i.GetComponent<EnemyController>()?.StartActive();
+		}
+
 		movementBehavior.enabled = true;
 		movementBehavior.EnableMove();
+
 	}
 
 	private void OnMouseEnter()

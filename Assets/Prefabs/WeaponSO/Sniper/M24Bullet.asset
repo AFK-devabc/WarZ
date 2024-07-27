@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: M24Bullet
   m_EditorClassIdentifier: 
   <id>k__BackingField: d24dd1cb-26c7-4a0b-a4a2-ebb75f4f2854
-  movSpeed: 20
+  movSpeed: 30
   hitMask:
     serializedVersion: 2
     m_Bits: 256
@@ -23,4 +23,5 @@ MonoBehaviour:
   lifeTime: 3
   startTime: 0
   delayTime: 0.5
-  reloadTime: 2
+  reloadTime: 4
+  shootAngle: 0

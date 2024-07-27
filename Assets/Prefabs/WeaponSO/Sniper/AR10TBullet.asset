@@ -23,4 +23,4 @@ MonoBehaviour:
   lifeTime: 3
   startTime: 0
   delayTime: 0.4
-  reloadTime: 2
+  reloadTime: 4

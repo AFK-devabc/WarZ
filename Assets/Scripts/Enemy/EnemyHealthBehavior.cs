@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 
 public class EnemyHealthBehavior : BaseHealthBehavior
@@ -7,7 +6,8 @@ public class EnemyHealthBehavior : BaseHealthBehavior
 	public override void ChangeHealth(float i_amout)
 	{
 		base.ChangeHealth(i_amout);
-		enemyController.StartActive();
+		if (m_nwCurrent.Value != 0)
+			enemyController.StartActive(true);
 	}
 
 }
