@@ -18,16 +18,12 @@ public class MainMenuUIController : MonoBehaviour
 	[SerializeField] CanvasGroup m_CanvasGroup;
 	[SerializeField] GameObject m_LoadingSpinner;
 
-	ApplicationController applicationController;
 
 	[SerializeField] private VoidEventChannelSO m_BlockUIEvent;
 	[SerializeField] private VoidEventChannelSO m_UnblockUIEvent;
 
 	private void Start()
 	{
-		applicationController = GameObject.Find("ApplicationController").GetComponent<ApplicationController>();
-
-
 		m_BlockUIEvent.OnEventRaised += BlockUIAndShowLoadingInProgress;
 		m_UnblockUIEvent.OnEventRaised += UnblockUIAndHideLoadingInProgress;
 
@@ -128,6 +124,6 @@ public class MainMenuUIController : MonoBehaviour
 
 	public void OnExitButtonClicked()
 	{
-		applicationController.QuitGame();
+		ApplicationController.GetInstance().QuitGame();
 	}
 }

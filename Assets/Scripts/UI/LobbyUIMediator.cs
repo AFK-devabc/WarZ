@@ -35,7 +35,7 @@ public class LobbyUIMediator : MonoBehaviour
 #endif
 	}
 
-	public async void CreateLobby()
+	public async void CreateLobby( string scenename = "DemoGamePlayScene")
 	{
 		m_BlockUIEvent.RaiseEvent();
 		bool m_isSignedin = await m_ServicesManager.m_authServiceFacade.EnsurePlayerIsAuthorized();
@@ -48,7 +48,7 @@ public class LobbyUIMediator : MonoBehaviour
 			return;
 		}
 		m_localLobbyUser.IsHost = true;
-		m_LocalLobby.SceneName = "DemoGamePlayScene";
+		m_LocalLobby.SceneName = scenename;
 		var m_createLobbyResult = await m_ServicesManager.m_lobbyServiceFacade.TryCreateLobbyAsync("Lobby", 4, false);
 
 		if (!m_createLobbyResult.Success)

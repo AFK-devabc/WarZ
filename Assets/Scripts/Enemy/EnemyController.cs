@@ -18,6 +18,8 @@ public class EnemyController : NetworkBehaviour
 	[SerializeField] private ZombieMeshContainerSO zombieMesh;
 	[SerializeField] Animator animator;
 	private bool isactivated = false;
+	private bool isDead = false;
+	public LayerMask playerLayer;
 
 	public override void OnNetworkSpawn()
 	{
@@ -71,8 +73,22 @@ public class EnemyController : NetworkBehaviour
 		movementBehavior.enabled = false;
 		healthBehavior.enabled = false;
 		collider.enabled = false;
-
+		isDead = true;
 		StartCoroutine(DeadCourtine());
+	}
+
+	private void FixedUpdate()
+	{
+		if (IsServer && !isactivated)
+		{
+			Collider[] result = Physics.OverlapSphere(this.transform.position, 10.0f, playerLayer);
+			if (result.Length > 0)
+			{
+				Debug.Log("Saw Player");
+
+				StartActive(true);
+			}
+		}
 	}
 
 	public IEnumerator DeadCourtine()
@@ -89,7 +105,7 @@ public class EnemyController : NetworkBehaviour
 
 	public void StartActive(bool useRoar = false)
 	{
-		if (isactivated)
+		if (isactivated || isDead)
 			return;
 		isactivated = true;
 		if (useRoar)
@@ -114,9 +130,11 @@ public class EnemyController : NetworkBehaviour
 			i.GetComponent<EnemyController>()?.StartActive();
 		}
 
-		movementBehavior.enabled = true;
-		movementBehavior.EnableMove();
-
+		if (!isDead)
+		{
+			movementBehavior.enabled = true;
+			movementBehavior.EnableMove();
+		}
 	}
 
 	private void OnMouseEnter()

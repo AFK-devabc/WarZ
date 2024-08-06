@@ -138,7 +138,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1887437128
+  GlobalObjectIdHash: 3814159800
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
@@ -168,6 +168,9 @@ MonoBehaviour:
   enemyStats: {fileID: 11400000, guid: c6f04306e2d89974c915079c23118f7c, type: 2}
   zombieMesh: {fileID: 11400000, guid: 2cc86fcbeb35f104eb5a668a205a072f, type: 2}
   animator: {fileID: 5715507658501043279}
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!114 &1590091813150351808
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -181,8 +184,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   worldGrid: {fileID: 0}
+  agentPosition: {fileID: 0}
   force: 1
+  moveDir: {x: 0, y: 0, z: 0}
   delayCaculateTime: 0
+  actualMoveDirection: {x: 0, y: 0, z: 0}
   animator: {fileID: 5715507658501043279}
   damage: 1
   attackRange: 1
@@ -190,6 +196,7 @@ MonoBehaviour:
   playerMask:
     serializedVersion: 2
     m_Bits: 128
+  isMoving: 0
 --- !u!114 &6804455013534252076
 MonoBehaviour:
   m_ObjectHideFlags: 0
